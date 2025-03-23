@@ -1,19 +1,45 @@
 ﻿@page "/"
 @using VigilantCity.Core.Models
-@inject Blazored.LocalStorage.ILocalStorageService localStorage;
+@using VigilantCity.Core.Services.Interfaces
+@inject ICityLoader cityLoader;
+@inject IJSRuntime jsRuntime;
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Welcome to Vigilant City</PageTitle>
 
-<h1>Hello, world!</h1>
+@if (City != null)
+{
+    <p>City Exists</p>
+}
+else
+{
+    <EditForm OnValidSubmit="HandleValidSubmit" Model="NewCharacter">
+        <DataAnnotationsValidator />
+        <ValidationSummary class="text-danger" />
 
-Welcome to your new app.
+        <div class="mb-3">
+            <label for="name" class="form-label">Name:</label>
+            <InputText id="name" @bind-Value="NewCharacter.Name" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label for="alias" class="form-label">Alias:</label>
+            <InputText id="alias" @bind-Value="NewCharacter.Alias" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </EditForm>
+}
 
 @code{
     public City? City { get; set; }
+    public Character NewCharacter = new Character();
+
     protected override async Task OnInitializedAsync()
     {
-        this.City = await localStorage.GetItemAsync<City>(nameof(City));
-
+        this.City = await cityLoader.LoadCityAsync();
         await base.OnInitializedAsync();
+    }
+
+    private void HandleValidSubmit()
+    {
+        jsRuntime.InvokeVoidAsync("alert", "Form submitted");
     }
 }

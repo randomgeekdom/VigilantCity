@@ -1,11 +1,11 @@
 ﻿namespace VigilantCity.Core.Models
 {
+    [Flags]
     public enum PowerOrigin
     {
         Alien,
-        Evolution,
-        Magic,
+        Mutation,
         Supernatural,
-        Technology,
+        Technological
     }
 }

@@ -1,8 +1,11 @@
-﻿namespace VigilantCity.Core.Models
+﻿using VigilantCity.Core.Models.Organizations;
+
+namespace VigilantCity.Core.Models
 {
     public record City : Entity
     {
-        public required HeroOrganization Organization { get; set; }
-        public IEnumerable<Hero> Heroes { get; set; } = [];
+        public Guid PlayerCharacterId { get; set; }
+        public IEnumerable<Organization> Organizations { get; set; } = [];
+        public IEnumerable<Character> Characters { get; set; } = [];
     }
 }
