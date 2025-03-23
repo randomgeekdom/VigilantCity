@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using VigilantCity.Blazor;
 using VigilantCity.Blazor.Services;
+using VigilantCity.Core.Services;
 using VigilantCity.Core.Services.Interfaces;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -13,5 +14,6 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services.AddBlazoredLocalStorageAsSingleton();
 
 builder.Services.AddScoped<ICityLoader, CityLoader>();
+builder.Services.AddScoped<ICityStarter, CityStarter>();
 
 await builder.Build().RunAsync();

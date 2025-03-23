@@ -1,0 +1,63 @@
+﻿@page "/start"
+@using VigilantCity.Core.Models
+@using VigilantCity.Core.Services.Interfaces
+@inject ICityLoader cityLoader;
+@inject IJSRuntime jsRuntime;
+@inject ICityStarter cityStarter;
+@inject NavigationManager Navigation;
+
+<PageTitle>Welcome to Vigilant City</PageTitle>
+
+<EditForm OnValidSubmit="HandleValidSubmitAsync" Model="NewCharacter">
+    <DataAnnotationsValidator />
+    <ValidationSummary class="text-danger" />
+
+    <div class="mb-3">
+        <label for="name" class="form-label">Name:</label>
+        <InputText id="name" @bind-Value="NewCharacter.Name" class="form-control" />
+        <ValidationMessage For="@(() => NewCharacter.Name)" />
+    </div>
+    <div class="mb-3">
+        <label for="alias" class="form-label">Alias:</label>
+        <InputText id="alias" @bind-Value="NewCharacter.Alias" class="form-control" />
+        <ValidationMessage For="@(() => NewCharacter.Alias)" />
+    </div>
+    <div class="mb-3">
+        <label for="gender" class="form-label">Gender:</label>
+        <InputSelect id="gender" @bind-Value="NewCharacter.Gender" class="form-control">
+            <option value="">Select Gender</option>
+            @foreach (var gender in Enum.GetValues(typeof(Gender)))
+            {
+                <option value="@gender">@gender</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => NewCharacter.Gender)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+@code {
+    public City? City { get; set; }
+    public Character NewCharacter = new Character();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var city = await cityLoader.LoadCityAsync();
+
+        if (this.City != null)
+        {
+            Navigation.NavigateTo("/");
+        }
+        else
+        {
+            await base.OnInitializedAsync();
+        }
+    }
+
+    private async Task HandleValidSubmitAsync()
+    {
+        await this.cityStarter.StartAsync(NewCharacter);
+        Navigation.NavigateTo("/");
+    }
+}

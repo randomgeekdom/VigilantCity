@@ -3,29 +3,14 @@
 @using VigilantCity.Core.Services.Interfaces
 @inject ICityLoader cityLoader;
 @inject IJSRuntime jsRuntime;
+@inject ICityStarter cityStarter;
+@inject NavigationManager Navigation;
 
 <PageTitle>Welcome to Vigilant City</PageTitle>
 
 @if (City != null)
 {
     <p>City Exists</p>
-}
-else
-{
-    <EditForm OnValidSubmit="HandleValidSubmit" Model="NewCharacter">
-        <DataAnnotationsValidator />
-        <ValidationSummary class="text-danger" />
-
-        <div class="mb-3">
-            <label for="name" class="form-label">Name:</label>
-            <InputText id="name" @bind-Value="NewCharacter.Name" class="form-control" />
-        </div>
-        <div class="mb-3">
-            <label for="alias" class="form-label">Alias:</label>
-            <InputText id="alias" @bind-Value="NewCharacter.Alias" class="form-control" />
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </EditForm>
 }
 
 @code{
@@ -35,11 +20,14 @@ else
     protected override async Task OnInitializedAsync()
     {
         this.City = await cityLoader.LoadCityAsync();
-        await base.OnInitializedAsync();
-    }
 
-    private void HandleValidSubmit()
-    {
-        jsRuntime.InvokeVoidAsync("alert", "Form submitted");
+        if (this.City == null)
+        {
+            Navigation.NavigateTo("/Start");
+        }
+        else
+        {
+            await base.OnInitializedAsync();
+        }
     }
 }
