@@ -11,7 +11,7 @@ namespace VigilantCity.Core.Models
         [Required]
         public Gender Gender { get; set; }
 
-        public List<Power> Powers { get; set; } = [];
+        public List<Power> Powers { get; set; } = new List<Power> { new() };
         public List<Relationship> PersonalRelationships { get; set; } = [];
         public List<Relationship> OrganizationRelationships { get; set; } = [];
     }

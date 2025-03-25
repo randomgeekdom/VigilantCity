@@ -1,4 +1,5 @@
 ﻿@page "/start"
+@using VigilantCity.Core.Extensions
 @using VigilantCity.Core.Models
 @using VigilantCity.Core.Services.Interfaces
 @inject ICityLoader cityLoader;
@@ -10,7 +11,7 @@
 
 <div class="row">
     <div class="col-12 col-md-4">
-        <p>When Athena fell, the heavens cried.  A thunderstorm raged across the skies as the once omnipotent guardian of the city was no more, felled by the hand of a devastating foe.  As they both tumbled to the ground and let loose their final breaths.  Yet, city called Vigilant wasn't given a chance to mourn.  Criminals that once feared the goddess now ran rampant, and the city was in chaos.  The city needed a new guardian, and it needed one fast.  The city needed you.</p>
+        <p>When Athena fell, the heavens cried.  A thunderstorm raged across the skies as the once omnipotent guardian of the city was no more, felled by the hand of a devastating foe.  As they both tumbled to the ground, they let loose their respective final breaths.  Yet, the city called Vigilant wasn't given a chance to mourn.  Criminals that once feared the goddess now ran rampant, and the city was in chaos.  The city needed a new guardian, and it needed one fast.  The city needed you.</p>
     </div>
     <div class="col-12 col-md-4">
         <h4>Create your hero:</h4>
@@ -39,11 +40,34 @@
                 </InputSelect>
                 <ValidationMessage For="@(() => NewCharacter.Gender)" />
             </div>
-
+            <div class="mb-3">
+                <label for="powerSet" class="form-label">Power Set:</label>
+                <InputSelect id="powerSet" @bind-Value="NewCharacter.Powers[0].PowerSet" class="form-control">
+                    <option value="">Select Power Set</option>
+                    @foreach (var powerSet in Enum.GetValues(typeof(PowerSet)).Cast<PowerSet>().OrderBy(x => x))
+                    {
+                        <option value="@powerSet">@powerSet.GetDisplayName()</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => NewCharacter.Powers[0].PowerSet)" />
+            </div>
+            <div class="mb-3">
+                <label for="powerOrigin" class="form-label">Power Origin:</label>
+                <InputSelect id="powerOrigin" @bind-Value="NewCharacter.Powers[0].PowerOrigin" class="form-control">
+                    <option value="">Select Power Origin</option>
+                    @foreach (var powerOrigin in Enum.GetValues(typeof(PowerOrigin)).Cast<PowerOrigin>().OrderBy(x=>x))
+                    {
+                        <option value="@powerOrigin">@powerOrigin</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => NewCharacter.Powers[0].PowerOrigin)" />
+                <p class="mt-2">@NewCharacter.Powers[0].PowerOrigin.GetDescription()</p>
+            </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </EditForm>
     </div>
 </div>
+
 @code {
     public City? City { get; set; }
     public Character NewCharacter = new Character();
