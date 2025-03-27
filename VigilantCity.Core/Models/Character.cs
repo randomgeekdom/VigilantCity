@@ -8,10 +8,8 @@ namespace VigilantCity.Core.Models
         public string? Name { get; set; } = "";
         [Required]
         public string? Alias { get; set; } = "";
-        [Required]
-        public Gender Gender { get; set; }
 
-        public List<Power> Powers { get; set; } = new List<Power> { new() };
+        public List<Power> Powers { get; set; } = [];
         public List<Relationship> PersonalRelationships { get; set; } = [];
         public List<Relationship> OrganizationRelationships { get; set; } = [];
     }

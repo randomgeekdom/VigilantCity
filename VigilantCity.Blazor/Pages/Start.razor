@@ -30,17 +30,6 @@
                 <ValidationMessage For="@(() => NewCharacter.Alias)" />
             </div>
             <div class="mb-3">
-                <label for="gender" class="form-label">Gender:</label>
-                <InputSelect id="gender" @bind-Value="NewCharacter.Gender" class="form-control">
-                    <option value="">Select Gender</option>
-                    @foreach (var gender in Enum.GetValues(typeof(Gender)))
-                    {
-                        <option value="@gender">@gender</option>
-                    }
-                </InputSelect>
-                <ValidationMessage For="@(() => NewCharacter.Gender)" />
-            </div>
-            <div class="mb-3">
                 <label for="powerSet" class="form-label">Power Set:</label>
                 <InputSelect id="powerSet" @bind-Value="NewCharacter.Powers[0].PowerSet" class="form-control">
                     <option value="">Select Power Set</option>
@@ -70,7 +59,8 @@
 
 @code {
     public City? City { get; set; }
-    public Character NewCharacter = new Character();
+    public Character NewCharacter = new Character { Powers = new List<Power> { new Power() } };
+
 
     protected override async Task OnInitializedAsync()
     {
