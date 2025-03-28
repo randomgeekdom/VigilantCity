@@ -20,7 +20,7 @@ namespace VigilantCity.Core.Extensions
             return attribute?.Name ?? value.ToString();
         }
 
-        public static T GetRandom<T>(this Enum value)
+        public static T GetRandom<T>()
         {
             var values = Enum.GetValues(typeof(T));
             var random = new Random();
