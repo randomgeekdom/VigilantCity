@@ -2,7 +2,9 @@
 {
     public enum IncidentType
     {
-        Robbery,
-        Rampage
+        Kidnapping,
+        MurderInvestigation,
+        Rampage,
+        Robbery
     }
 }

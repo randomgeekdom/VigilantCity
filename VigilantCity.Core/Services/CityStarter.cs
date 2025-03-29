@@ -10,9 +10,10 @@ namespace VigilantCity.Core.Services
     {
         public async Task<City> StartAsync(Character startingCharacter)
         {
-            var city = new City();
-            city.Characters.Add(startingCharacter);
-            city.PlayerCharacterId = startingCharacter.Id;
+            var city = new City
+            {
+                PlayerCharacter = startingCharacter
+            };
 
             await cityLoader.SaveCityAsync(city);
 

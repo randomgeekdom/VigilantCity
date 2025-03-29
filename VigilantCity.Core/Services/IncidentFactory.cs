@@ -19,15 +19,11 @@ namespace VigilantCity.Core.Services
 
                 for (int i = 0; i < _random.Next(1, 5); i++)
                 {
-                    var type = _random.GetRandom<IncidentType>();
-                    var description = type switch
-                    {
-                        IncidentType.Rampage => "Someone is on a rampage",
-                        IncidentType.Robbery => "A robbery is in progress",
-                        _ => "An incident is in progress"
-                    };
+                    var incidentType = _random.GetRandom<IncidentType>();
+                    var description = incidentType.GetIncidentText();
+                    var timeToResolve = incidentType.GetIncidentTimeToResolve();
 
-                    city.Incidents.Add(new Incident(description, type, district));
+                    city.Incidents.Add(new Incident(description, incidentType, district, timeToResolve));
                 }
             }
         }
