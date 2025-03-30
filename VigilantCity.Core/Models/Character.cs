@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using VigilantCity.Core.Models.Enumerations;
 
 namespace VigilantCity.Core.Models
 {
@@ -11,6 +12,7 @@ namespace VigilantCity.Core.Models
 
         public List<Power> Powers { get; set; } = [];
         public List<Relationship> PersonalRelationships { get; set; } = [];
-        public List<Relationship> OrganizationRelationships { get; set; } = [];
+
+        public Dictionary<Skill, int> Skills = [];
     }
 }

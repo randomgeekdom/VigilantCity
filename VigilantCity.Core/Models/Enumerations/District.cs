@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace VigilantCity.Core.Models
+namespace VigilantCity.Core.Models.Enumerations
 {
     public enum District
     {

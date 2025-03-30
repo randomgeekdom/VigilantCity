@@ -1,6 +1,8 @@
 ﻿@page "/start"
 @using VigilantCity.Core.Extensions
 @using VigilantCity.Core.Models
+@using VigilantCity.Core.Models.Enumerations
+@using VigilantCity.Core.Models.PowerSets
 @using VigilantCity.Core.Services.Interfaces
 @inject ICityLoader cityLoader;
 @inject IJSRuntime jsRuntime;
@@ -31,11 +33,11 @@
             </div>
             <div class="mb-3">
                 <label for="powerSet" class="form-label">Power Set:</label>
-                <InputSelect id="powerSet" @bind-Value="NewCharacter.Powers[0].PowerSet" class="form-control">
+                <InputSelect id="powerSet" @bind-Value="SelectedPowerSetName" class="form-control">
                     <option value="">Select Power Set</option>
-                    @foreach (var powerSet in Enum.GetValues(typeof(PowerSet)).Cast<PowerSet>().OrderBy(x => x))
+                    @foreach (var ps in PowerSet.List().OrderBy(x => x.DisplayName))
                     {
-                        <option value="@powerSet">@powerSet.GetDisplayName()</option>
+                        <option value="@ps.Name">@ps.ToString()</option>
                     }
                 </InputSelect>
                 <ValidationMessage For="@(() => NewCharacter.Powers[0].PowerSet)" />
@@ -44,7 +46,7 @@
                 <label for="powerOrigin" class="form-label">Power Origin:</label>
                 <InputSelect id="powerOrigin" @bind-Value="NewCharacter.Powers[0].PowerOrigin" class="form-control">
                     <option value="">Select Power Origin</option>
-                    @foreach (var powerOrigin in Enum.GetValues(typeof(PowerOrigin)).Cast<PowerOrigin>().OrderBy(x=>x))
+                    @foreach (var powerOrigin in Enum.GetValues(typeof(PowerOrigin)).Cast<PowerOrigin>().OrderBy(x => x))
                     {
                         <option value="@powerOrigin">@powerOrigin</option>
                     }
@@ -59,8 +61,15 @@
 
 @code {
     public City? City { get; set; }
-    public Character NewCharacter = new Character { Powers = new List<Power> { new Power() } };
+    public Character NewCharacter { get; set; } = new Character { Powers = new List<Power> { new Power() } };
 
+    // Helper property to bind PowerSet by its Name
+    private string SelectedPowerSetName
+    {
+        get => NewCharacter.Powers[0].PowerSet?.Name ?? "";
+        set => NewCharacter.Powers[0].PowerSet = PowerSet.List().FirstOrDefault(ps =>
+            string.Equals(ps.Name, value, StringComparison.OrdinalIgnoreCase));
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -78,7 +87,7 @@
 
     private async Task HandleValidSubmitAsync()
     {
-        await this.cityStarter.StartAsync(NewCharacter);
+        await cityStarter.StartAsync(NewCharacter);
         Navigation.NavigateTo("/");
     }
 }

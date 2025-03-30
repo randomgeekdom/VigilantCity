@@ -1,4 +1,6 @@
-﻿namespace VigilantCity.Core.Models.Incidents
+﻿using VigilantCity.Core.Models.Enumerations;
+
+namespace VigilantCity.Core.Models.Incidents
 {
     public record Incident : Entity
     {

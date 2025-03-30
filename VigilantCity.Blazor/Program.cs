@@ -15,5 +15,6 @@ builder.Services.AddBlazoredLocalStorageAsSingleton();
 
 builder.Services.AddScoped<ICityLoader, CityLoader>();
 builder.Services.AddScoped<ICityStarter, CityStarter>();
+builder.Services.AddScoped<IIncidentFactory, IncidentFactory>();
 
 await builder.Build().RunAsync();

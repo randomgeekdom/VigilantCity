@@ -1,5 +1,6 @@
 ﻿using VigilantCity.Core.Extensions;
 using VigilantCity.Core.Models;
+using VigilantCity.Core.Models.Enumerations;
 using VigilantCity.Core.Models.Incidents;
 using VigilantCity.Core.Services.Interfaces;
 
@@ -24,6 +25,23 @@ namespace VigilantCity.Core.Services
                     var timeToResolve = incidentType.GetIncidentTimeToResolve();
 
                     city.Incidents.Add(new Incident(description, incidentType, district, timeToResolve));
+                }
+            }
+        }
+    }
+
+    public class IncidentResolver
+    {
+        public void ResolveIncidents(City city, Guid heroIncidentId)
+        {
+            var heroIncident = city.Incidents.FirstOrDefault(x => x.Id == heroIncidentId);
+
+            foreach (var incident in city.Incidents)
+            {
+                incident.TimeToResolve--;
+                if (incident.TimeToResolve <= 0)
+                {
+                    city.Incidents.Remove(incident);
                 }
             }
         }
