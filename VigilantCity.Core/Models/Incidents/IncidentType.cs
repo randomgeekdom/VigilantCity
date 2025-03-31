@@ -1,9 +1,11 @@
-﻿namespace VigilantCity.Core.Models.Incidents
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace VigilantCity.Core.Models.Incidents
 {
     public enum IncidentType
     {
         Kidnapping,
-        MurderInvestigation,
+        Murder,
         Rampage,
         Robbery
     }

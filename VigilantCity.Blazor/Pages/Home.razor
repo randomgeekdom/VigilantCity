@@ -1,19 +1,62 @@
 ﻿@page "/"
+@using VigilantCity.Core.Extensions
 @using VigilantCity.Core.Models
 @using VigilantCity.Core.Services.Interfaces
 @inject ICityLoader cityLoader;
 @inject IJSRuntime jsRuntime;
 @inject ICityStarter cityStarter;
+@inject IIncidentFactory incidentFactory;
 @inject NavigationManager Navigation;
 
 <PageTitle>Welcome to Vigilant City</PageTitle>
 
 @if (City != null)
 {
-    <p>City Exists</p>
+    <div class="mb-4">
+        <h3>@City.PlayerCharacter.Alias (@City.PlayerCharacter.Name)</h3>
+    </div>
+
+    @if (City.Incidents != null && City.Incidents.Any())
+    {
+        <div class="accordion" id="incidentAccordion">
+            @for (int i = 0; i < City.Incidents.Count; i++)
+            {
+                var incident = City.Incidents[i];
+                var collapseId = $"collapseIncident{i}";
+                var headingId = $"headingIncident{i}";
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="@headingId">
+                        <button class="accordion-button collapsed w-100" type="button" data-bs-toggle="collapse" data-bs-target="@($"#{collapseId}")" aria-expanded="false" aria-controls="@collapseId">
+                            <table class="w-100">
+                                <tr>
+                                    <td style="width:1%; white-space:nowrap; text-align: left;">
+                                        <span role="img" aria-label="clock">⌛</span> @incident.TimeToResolve
+                                    </td>
+                                    <td class="ps-3" style="text-align: left;">
+                                        @($"{incident.Type} in {incident.District.GetDisplayName()}")
+                                    </td>
+                                </tr>
+                            </table>
+                        </button>
+                    </h2>
+                    <div id="@collapseId" class="accordion-collapse collapse" aria-labelledby="@headingId" data-bs-parent="#incidentAccordion">
+                        <div class="accordion-body">
+                            @incident.Description
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="mb-3">
+            <button class="btn btn-primary" @onclick="PatrolAsync">Patrol</button>
+        </div>
+    }
 }
 
-@code{
+@code {
     public City? City { get; set; }
 
     protected override async Task OnInitializedAsync()
@@ -28,5 +71,10 @@
         {
             await base.OnInitializedAsync();
         }
+    }
+
+    private async Task PatrolAsync()
+    {
+        await incidentFactory.GenerateIncidents(this.City!);
     }
 }

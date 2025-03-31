@@ -28,7 +28,7 @@ namespace VigilantCity.Core.Extensions
                 IncidentType.Rampage => "Someone is going on a rampage",
                 IncidentType.Robbery => "A robbery is in progress",
                 IncidentType.Kidnapping => "Someone has been kidnapped",
-                IncidentType.MurderInvestigation => "Someone has been murdered.  No suspects have been identified",
+                IncidentType.Murder => "Someone has been murdered.  No suspects have been identified",
                 _ => "An incident is in progress",
             };
         }
@@ -39,7 +39,7 @@ namespace VigilantCity.Core.Extensions
             return value switch
             {
                 IncidentType.Kidnapping => random.Next(1, 5),
-                IncidentType.MurderInvestigation => random.Next(1, 16),
+                IncidentType.Murder => random.Next(1, 16),
                 _ => 1,
             };
         }

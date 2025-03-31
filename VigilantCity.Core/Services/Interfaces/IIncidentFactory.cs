@@ -4,6 +4,6 @@ namespace VigilantCity.Core.Services.Interfaces
 {
     public interface IIncidentFactory
     {
-        void GenerateIncidents(City city);
+        Task GenerateIncidents(City city);
     }
 }

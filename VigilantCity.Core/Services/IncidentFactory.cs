@@ -1,4 +1,5 @@
-﻿using VigilantCity.Core.Extensions;
+﻿using System.Formats.Asn1;
+using VigilantCity.Core.Extensions;
 using VigilantCity.Core.Models;
 using VigilantCity.Core.Models.Enumerations;
 using VigilantCity.Core.Models.Incidents;
@@ -6,33 +7,49 @@ using VigilantCity.Core.Services.Interfaces;
 
 namespace VigilantCity.Core.Services
 {
-    public class IncidentFactory : IIncidentFactory
+    public class IncidentFactory(ICityLoader cityLoader) : IIncidentFactory
     {
         private readonly Random _random = new();
-        public void GenerateIncidents(City city)
+        private readonly ICityLoader _cityLoader = cityLoader;
+
+        public async Task GenerateIncidents(City city)
         {
-            foreach (var district in Enum.GetValues<District>())
+            do
             {
-                if (city.Incidents.Any(x => x.District == district))
+                foreach (var district in Enum.GetValues<District>())
                 {
-                    continue;
-                }
+                    if (city.Incidents.Any(x => x.District == district))
+                    {
+                        continue;
+                    }
 
-                for (int i = 0; i < _random.Next(1, 5); i++)
-                {
-                    var incidentType = _random.GetRandom<IncidentType>();
-                    var description = incidentType.GetIncidentText();
-                    var timeToResolve = incidentType.GetIncidentTimeToResolve();
+                    if(_random.Next(1, 10) > 7)
+                    {
+                        var incidentType = _random.GetRandom<IncidentType>();
+                        var description = incidentType.GetIncidentText();
+                        var timeToResolve = incidentType.GetIncidentTimeToResolve();
 
-                    city.Incidents.Add(new Incident(description, incidentType, district, timeToResolve));
+                        city.Incidents.Add(new Incident(description, incidentType, district, timeToResolve));
+                    }
                 }
             }
+            while (city.Incidents.Count < 3);
+            await _cityLoader.SaveCityAsync(city);
         }
     }
 
-    public class IncidentResolver
+    public class IncidentResolver(ICityLoader cityLoader)
     {
-        public void ResolveIncidents(City city, Guid heroIncidentId)
+        //TODO:
+        /*
+            Resolve hero incident with the approach given
+            Resolve other incidents randomly if they hit 0
+            Return alerts for each resolved incident
+            Add to "Vigilant Comics" issues
+         */
+
+
+        public async Task ResolveIncidentsAsync(City city, Guid heroIncidentId, Approach approach)
         {
             var heroIncident = city.Incidents.FirstOrDefault(x => x.Id == heroIncidentId);
 
@@ -44,6 +61,8 @@ namespace VigilantCity.Core.Services
                     city.Incidents.Remove(incident);
                 }
             }
+
+            await cityLoader.SaveCityAsync(city);
         }
     }
 }
