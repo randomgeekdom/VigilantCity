@@ -51,7 +51,7 @@ namespace VigilantCity.Core.Services
 
         public async Task ResolveIncidentsAsync(City city, Guid heroIncidentId, Approach approach)
         {
-            var heroIncident = city.Incidents.FirstOrDefault(x => x.Id == heroIncidentId);
+            var heroIncident = city.Incidents.FirstOrDefault(x => x.Id == heroIncidentId);  
 
             foreach (var incident in city.Incidents)
             {
