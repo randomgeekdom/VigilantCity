@@ -6,14 +6,13 @@ using VigilantCity.Core.Services.Interfaces;
 
 namespace VigilantCity.Core.Services
 {
-    public class IncidentResolver(ICityLoader cityLoader)
+    public class IncidentResolver(ICityLoader cityLoader) : IIncidentResolver
     {
         //TODO:
         /*
-            Resolve hero incident with the approach given
-            Resolve other incidents randomly if they hit 0
-            Return alerts for each resolved incident
             Add to "Vigilant Comics" issues
+            Add randomized vigilantes
+            Add civilians (if resolved by civilians, every character's reputation goes down)
          */
 
         public async Task ResolveIncidentsAsync(City city, Guid heroIncidentId, List<Approach> approaches)
@@ -45,7 +44,7 @@ namespace VigilantCity.Core.Services
 
             var powerSet = character.Powers.GetRandom();
 
-            var powerManifestation = character.PowerManifestations.FirstOrDefault(x => 
+            var powerManifestation = character.PowerManifestations.FirstOrDefault(x =>
             approaches.Contains(x.Approach) &&
             x.DifficultyLevel == incident.DifficultyLevel &&
             x.Power == powerSet);
@@ -58,7 +57,7 @@ namespace VigilantCity.Core.Services
             var isIncidentResolved = ResolveIncident(city.PlayerCharacter, incident, approaches);
             var description = $"{incident.Type.GetDisplayName()} in {incident.District.GetDisplayName()}";
             city.Incidents.Remove(incident);
-            if (isIncidentResolved) 
+            if (isIncidentResolved)
             {
                 character.Reputation += incident.DifficultyLevel.Roll % 5 + 1;
                 city.Alerts.Add(city.PlayerCharacter.Alias + " resolved the " + description);

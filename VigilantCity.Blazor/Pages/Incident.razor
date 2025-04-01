@@ -5,6 +5,7 @@
 @using VigilantCity.Core.Services.Interfaces
 
 @inject ICityLoader cityLoader;
+@inject IIncidentResolver incidentResolver;
 @inject NavigationManager Navigation;
 
 @code {
@@ -57,9 +58,10 @@
         StateHasChanged();
     }
 
-    private void ResolveIncident()
+    private async Task ResolveIncidentAsync()
     {
-        // TODO: Implement resolve logic using selectedApproaches.
+        await incidentResolver.ResolveIncidentsAsync(City!, this.IncidentId, selectedApproaches);
+        Navigation.NavigateTo("/");
     }
 }
 
@@ -107,7 +109,7 @@
                     </div>
                 }
                 <br />
-                <button class="btn btn-primary mt-2" @onclick="ResolveIncident" disabled="@(selectedApproaches.Count != 2)">Resolve</button>
+                <button class="btn btn-primary mt-2" @onclick="ResolveIncidentAsync" disabled="@(selectedApproaches.Count != 2)">Resolve</button>
             </div>
         </div>
     </div>
