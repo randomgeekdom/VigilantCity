@@ -4,19 +4,19 @@ namespace VigilantCity.Core.Models.Enumerations
 {
     public enum Approach
     {
-        [Display(Name = "Empowered", Description = "Use powers whenever possible.")]
-        Empowered,  // Uses superpowers wherever possible
+        [Display(Name = "Diplomatic", Description = "Talk it out.")]
+        Diplomatic, 
 
-        [Display(Name ="Lethal", Description ="When in doubt, kill them.")]
-        Lethal, // When in doubt, kill the MFer
+        [Display(Name = "Lethal", Description = "When in doubt, kill them.")]
+        Lethal, 
 
-        [Display(Name ="Stealthy", Description = "Try not to be seen.")]
-        Stealthy,   // Try to avoid being seen
+        [Display(Name = "Stealthy", Description = "Try not to be seen.")]
+        Stealthy,  
 
         [Display(Name = "Swift", Description = "Be quick.")]
-        Swift,  // Be as quick as possible
+        Swift,  
 
-        [Display(Name ="Tactical", Description = "Use your wits.")]
-        Tactical   //  Use your mind
+        [Display(Name = "Tactical", Description = "Use your wits.")]
+        Tactical 
     }
 }

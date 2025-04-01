@@ -7,5 +7,6 @@ namespace VigilantCity.Core.Models
         public required Character PlayerCharacter { get; set; }
         public List<Character> Characters { get; set; } = [];
         public List<Incident> Incidents { get; set; } = [];
+        public List<string> Alerts { get; set; } = [];
     }
 }

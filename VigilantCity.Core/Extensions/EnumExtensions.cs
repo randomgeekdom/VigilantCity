@@ -20,28 +20,5 @@ namespace VigilantCity.Core.Extensions
             var attribute = (System.ComponentModel.DataAnnotations.DisplayAttribute)field.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.DisplayAttribute), false).FirstOrDefault();
             return attribute?.Name ?? value.ToString();
         }
-
-        public static string GetIncidentText(this IncidentType value) 
-        {
-            return value switch
-            {
-                IncidentType.Rampage => "Someone is going on a rampage",
-                IncidentType.Robbery => "A robbery is in progress",
-                IncidentType.Kidnapping => "Someone has been kidnapped",
-                IncidentType.Murder => "Someone has been murdered.  No suspects have been identified",
-                _ => "An incident is in progress",
-            };
-        }
-
-        public static int GetIncidentTimeToResolve(this IncidentType value)
-        {
-            Random random = new();
-            return value switch
-            {
-                IncidentType.Kidnapping => random.Next(1, 5),
-                IncidentType.Murder => random.Next(1, 16),
-                _ => 1,
-            };
-        }
     }
 }

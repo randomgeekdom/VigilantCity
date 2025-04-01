@@ -1,4 +1,6 @@
 ﻿using VigilantCity.Core.Models.Enumerations;
+using VigilantCity.Core.Models.PowerSets;
+using VigilantCity.Core.Models.SmartEnums;
 
 namespace VigilantCity.Core.Models.Incidents
 {
@@ -8,13 +10,17 @@ namespace VigilantCity.Core.Models.Incidents
         public string Description { get; set; }
         public District District { get; set; }
         public int TimeToResolve { get; set; }
-
-        public Incident(string description, IncidentType type, District district, int timeToResolve = 1)
+        public DifficultyLevel DifficultyLevel { get; set; }
+        public Dictionary<Approach, int> ApproachModifiers { get; set; } = [];
+        
+        public Incident(string description, IncidentType type, District district, DifficultyLevel difficultyLevel, int timeToResolve, Dictionary<Approach, int> approachModifiers)
         {
             this.Description = description;
             this.Type = type;
             this.District = district;
+            this.DifficultyLevel = difficultyLevel;
             this.TimeToResolve = timeToResolve;
+            this.ApproachModifiers = approachModifiers;
         }
     }
 }

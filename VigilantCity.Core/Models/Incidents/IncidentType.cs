@@ -7,6 +7,8 @@ namespace VigilantCity.Core.Models.Incidents
         Kidnapping,
         Murder,
         Rampage,
-        Robbery
+        Robbery,
+        [Display(Name = "Hostage Situation")]
+        HostageSituation
     }
 }

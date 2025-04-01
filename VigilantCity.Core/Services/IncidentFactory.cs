@@ -1,16 +1,16 @@
-﻿using System.Formats.Asn1;
-using VigilantCity.Core.Extensions;
+﻿using VigilantCity.Core.Extensions;
 using VigilantCity.Core.Models;
 using VigilantCity.Core.Models.Enumerations;
 using VigilantCity.Core.Models.Incidents;
+using VigilantCity.Core.Models.PowerSets;
 using VigilantCity.Core.Services.Interfaces;
 
 namespace VigilantCity.Core.Services
 {
-    public class IncidentFactory(ICityLoader cityLoader) : IIncidentFactory
+    public partial class IncidentFactory(ICityLoader cityLoader) : IIncidentFactory
     {
-        private readonly Random _random = new();
         private readonly ICityLoader _cityLoader = cityLoader;
+        private readonly Random _random = new();
 
         public async Task GenerateIncidents(City city)
         {
@@ -23,46 +23,68 @@ namespace VigilantCity.Core.Services
                         continue;
                     }
 
-                    if(_random.Next(1, 10) > 7)
+                    if (_random.Next(1, 10) > 7)
                     {
-                        var incidentType = _random.GetRandom<IncidentType>();
-                        var description = incidentType.GetIncidentText();
-                        var timeToResolve = incidentType.GetIncidentTimeToResolve();
-
-                        city.Incidents.Add(new Incident(description, incidentType, district, timeToResolve));
+                        city.Incidents.Add(GetIncident(district));
                     }
                 }
             }
             while (city.Incidents.Count < 3);
             await _cityLoader.SaveCityAsync(city);
         }
-    }
 
-    public class IncidentResolver(ICityLoader cityLoader)
-    {
-        //TODO:
-        /*
-            Resolve hero incident with the approach given
-            Resolve other incidents randomly if they hit 0
-            Return alerts for each resolved incident
-            Add to "Vigilant Comics" issues
-         */
-
-
-        public async Task ResolveIncidentsAsync(City city, Guid heroIncidentId, Approach approach)
+        private Incident GetIncident(District district)
         {
-            var heroIncident = city.Incidents.FirstOrDefault(x => x.Id == heroIncidentId);  
-
-            foreach (var incident in city.Incidents)
+            var incidentType = _random.GetRandom<IncidentType>();
+            return incidentType switch
             {
-                incident.TimeToResolve--;
-                if (incident.TimeToResolve <= 0)
-                {
-                    city.Incidents.Remove(incident);
-                }
-            }
-
-            await cityLoader.SaveCityAsync(city);
+                IncidentType.Kidnapping => new Incident("A child has been kidnapped and the parents are desperate to find them.", IncidentType.Kidnapping, district, DifficultyLevel.List().GetRandom(), _random.Next(6) + 1,
+                                        new Dictionary<Approach, int>
+                                        {
+                            { Approach.Diplomatic, _random.Next(2) },
+                            { Approach.Stealthy, _random.Next(2) },
+                            { Approach.Swift, _random.Next(-8, -4) },
+                            { Approach.Tactical, _random.Next(4) },
+                            { Approach.Lethal, _random.Next(-1, 7) }
+                                        }),
+                IncidentType.Robbery => new Incident("A robbery is occurring and the perpitrators are heavily armed.", IncidentType.Robbery, district, DifficultyLevel.List().GetRandom(), 1,
+                        new Dictionary<Approach, int>
+                        {
+                            { Approach.Diplomatic, _random.Next(-9,0) },
+                            { Approach.Stealthy, _random.Next(-5, 2) },
+                            { Approach.Swift, _random.Next(5,8) },
+                            { Approach.Tactical, _random.Next(-2, 2) },
+                            { Approach.Lethal, _random.Next(3) }
+                        }),
+                IncidentType.Rampage => new Incident("Someone is on a rampage and is causing chaos in the streets.", IncidentType.Rampage, district, DifficultyLevel.List().GetRandom(), 1,
+                        new Dictionary<Approach, int>
+                        {
+                            { Approach.Diplomatic, _random.Next(-7, 10) },
+                            { Approach.Stealthy, _random.Next(-8, 4) },
+                            { Approach.Swift, _random.Next(2) },
+                            { Approach.Tactical, _random.Next(4) },
+                            { Approach.Lethal, _random.Next(-1, 3) }
+                        }),
+                IncidentType.Murder => new Incident("Someone has been murdered. Their death needs to be investigated.", IncidentType.Murder, district, DifficultyLevel.List().GetRandom(), _random.Next(6) + 1,
+                        new Dictionary<Approach, int>
+                        {
+                            { Approach.Diplomatic, _random.Next(2) },
+                            { Approach.Stealthy, _random.Next(4) },
+                            { Approach.Swift, _random.Next(-2, 1) },
+                            { Approach.Tactical, _random.Next(2) },
+                            { Approach.Lethal, _random.Next(-5, -2) }
+                        }),
+                IncidentType.HostageSituation => new Incident("There is a hostage situation currently in progress.", IncidentType.HostageSituation, district, DifficultyLevel.List().GetRandom(), 1,
+                        new Dictionary<Approach, int>
+                        {
+                            { Approach.Diplomatic, _random.Next(4) },
+                            { Approach.Stealthy, _random.Next(9) },
+                            { Approach.Swift, _random.Next(-5, 5) },
+                            { Approach.Tactical, _random.Next(10) },
+                            { Approach.Lethal, _random.Next(-3, 4) }
+                        }),
+                _ => throw new NotImplementedException(),
+            };
         }
     }
 }
