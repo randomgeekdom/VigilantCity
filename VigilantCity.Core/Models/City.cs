@@ -8,5 +8,6 @@ namespace VigilantCity.Core.Models
         public List<Character> Characters { get; set; } = [];
         public List<Incident> Incidents { get; set; } = [];
         public List<string> Alerts { get; set; } = [];
+        public List<string> Issues { get; set; } = [];
     }
 }
