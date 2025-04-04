@@ -8,6 +8,64 @@
 @inject IIncidentResolver incidentResolver;
 @inject NavigationManager Navigation;
 
+
+<PageTitle>Incident Details</PageTitle>
+
+<!-- Back Button -->
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-12">
+            <button class="btn btn-link" @onclick='() => Navigation.NavigateTo("/")'>
+                <i class="fa-solid fa-arrow-left"></i> Back
+            </button>
+        </div>
+    </div>
+</div>
+
+@if (CurrentIncident != null)
+{
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h3 class="card-title">@CurrentIncident.Type in @CurrentIncident.District.GetDisplayName()</h3>
+                        <p class="card-text">@CurrentIncident.Description</p>
+                        <p class="card-text"><strong>Difficulty:</strong> @CurrentIncident.DifficultyLevel</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- New Approach Section -->
+        <div class="row justify-content-center mt-3">
+            <div class="col-12 col-md-8 text-center">
+                <p><strong>Please select two approaches to resolve.</strong></p>
+                @foreach (var approach in Enum.GetValues(typeof(Approach)).Cast<Approach>())
+                {
+                    <div class="form-check form-check-inline">
+                        <input type="checkbox" class="form-check-input" id="@($"approach_{approach}")"
+                               @onchange="(e) => ToggleApproaches(e, approach)"
+                               checked="@selectedApproaches.Contains(approach)"
+                               disabled="@(!selectedApproaches.Contains(approach) && selectedApproaches.Count >= 2)" />
+                        <label class="form-check-label" for="@($"approach_{approach}")">
+                            @approach.GetDisplayName()
+                            <i class="fa-solid fa-circle-question ms-1" data-bs-toggle="tooltip" title="@approach.GetDescription()"></i>
+                        </label>
+                    </div>
+                }
+                <br />
+                <button class="btn btn-primary mt-2" @onclick="ResolveIncidentAsync" disabled="@(selectedApproaches.Count != 2)">Resolve</button>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container mt-5">
+        <p>Loading...</p>
+    </div>
+}
+
 @code {
     [Parameter]
     public Guid IncidentId { get; set; }
@@ -63,60 +121,4 @@
         await incidentResolver.ResolveIncidentsAsync(City!, this.IncidentId, selectedApproaches);
         Navigation.NavigateTo("/");
     }
-}
-
-<PageTitle>Incident Details</PageTitle>
-
-<!-- Back Button -->
-<div class="container mt-3">
-    <div class="row">
-        <div class="col-12">
-            <button class="btn btn-link" @onclick='() => Navigation.NavigateTo("/")'>
-                <i class="fa-solid fa-arrow-left"></i> Back
-            </button>
-        </div>
-    </div>
-</div>
-
-@if (CurrentIncident != null)
-{
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-8">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <h3 class="card-title">@CurrentIncident.Type in @CurrentIncident.District.GetDisplayName()</h3>
-                        <p class="card-text">@CurrentIncident.Description</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- New Approach Section -->
-        <div class="row justify-content-center mt-3">
-            <div class="col-12 col-md-8 text-center">
-                <p><strong>Please select two approaches to resolve.</strong></p>
-                @foreach (var approach in Enum.GetValues(typeof(Approach)).Cast<Approach>())
-                {
-                    <div class="form-check form-check-inline">
-                        <input type="checkbox" class="form-check-input" id="@($"approach_{approach}")"
-                               @onchange="(e) => ToggleApproaches(e, approach)"
-                               checked="@selectedApproaches.Contains(approach)"
-                               disabled="@(!selectedApproaches.Contains(approach) && selectedApproaches.Count >= 2)" />
-                        <label class="form-check-label" for="@($"approach_{approach}")">
-                            @approach.GetDisplayName()
-                            <i class="fa-solid fa-circle-question ms-1" data-bs-toggle="tooltip" title="@approach.GetDescription()"></i>
-                        </label>
-                    </div>
-                }
-                <br />
-                <button class="btn btn-primary mt-2" @onclick="ResolveIncidentAsync" disabled="@(selectedApproaches.Count != 2)">Resolve</button>
-            </div>
-        </div>
-    </div>
-}
-else
-{
-    <div class="container mt-5">
-        <p>Loading...</p>
-    </div>
 }

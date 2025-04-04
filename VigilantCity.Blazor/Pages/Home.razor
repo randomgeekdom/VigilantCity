@@ -60,7 +60,7 @@
                                         <i class="fa-solid fa-stopwatch" aria-hidden="true"></i> @incident.TimeToResolve
                                     </td>
                                     <td class="ps-3">
-                                        @($"{incident.Type} in {incident.District.GetDisplayName()}")
+                                        @($"{incident.Type.GetDisplayName()} in {incident.District.GetDisplayName()}")
                                     </td>
                                 </tr>
                             </table>
