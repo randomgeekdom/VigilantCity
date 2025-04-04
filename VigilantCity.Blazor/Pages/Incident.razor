@@ -32,6 +32,9 @@
                         <h3 class="card-title">@CurrentIncident.Type in @CurrentIncident.District.GetDisplayName()</h3>
                         <p class="card-text">@CurrentIncident.Description</p>
                         <p class="card-text"><strong>Difficulty:</strong> @CurrentIncident.DifficultyLevel</p>
+                        <p>
+                            <i class="fa-solid fa-stopwatch" aria-hidden="true"></i> @CurrentIncident.TimeToResolve
+                        </p>
                     </div>
                 </div>
             </div>

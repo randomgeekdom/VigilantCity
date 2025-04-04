@@ -43,7 +43,8 @@
 @if (City != null)
 {
     <div class="mb-4 text-center">
-        <h3>@City.PlayerCharacter.Alias (@City.PlayerCharacter.RealName)</h3>
+        <h3>@City.PlayerCharacter.Alias</h3>
+        <p>(@City.PlayerCharacter.RealName)</p>
     </div>
 
     @if (City.Incidents != null && City.Incidents.Any())
@@ -53,17 +54,11 @@
                 <div class="list-group">
                     @foreach (var incident in City.Incidents)
                     {
-                        <button class="list-group-item list-group-item-action" @onclick="() => NavigateToIncident(incident.Id)">
-                            <table class="w-100 text-center">
-                                <tr>
-                                    <td style="width:1%; white-space:nowrap;">
-                                        <i class="fa-solid fa-stopwatch" aria-hidden="true"></i> @incident.TimeToResolve
-                                    </td>
-                                    <td class="ps-3">
-                                        @($"{incident.Type.GetDisplayName()} in {incident.District.GetDisplayName()}")
-                                    </td>
-                                </tr>
-                            </table>
+                        <button class="btn btn-outline-danger list-group-item list-group-item-action" @onclick="() => NavigateToIncident(incident.Id)">
+                            @($"{incident.Type.GetDisplayName()} in {incident.District.GetDisplayName()}")
+                            &Tab;
+
+                            <i class="fa-solid fa-stopwatch" aria-hidden="true"></i> @incident.TimeToResolve
                         </button>
                     }
                 </div>
