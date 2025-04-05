@@ -1,12 +1,9 @@
 ﻿using VigilantCity.Core.Models.Enumerations;
 using VigilantCity.Core.Models.PowerSets;
 
-namespace VigilantCity.Core.Models
+namespace VigilantCity.Core.Models.SmartEnums
 {
-    public record PowerManifestation : Entity
+    public record PowerManifestation(Approach Approach, PowerOrigin PowerOrigin, PowerSet PowerSet, DifficultyLevel DifficultyLevel) : Entity
     {
-        public required Power Power { get; set; }
-        public Approach Approach { get; set; }
-        public required DifficultyLevel DifficultyLevel { get; set; }
     }
 }

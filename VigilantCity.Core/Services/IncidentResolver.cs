@@ -2,12 +2,14 @@
 using VigilantCity.Core.Models;
 using VigilantCity.Core.Models.Enumerations;
 using VigilantCity.Core.Models.Incidents;
+using VigilantCity.Core.Models.SmartEnums;
 using VigilantCity.Core.Services.Interfaces;
 
 namespace VigilantCity.Core.Services
 {
     public class IncidentResolver(ICityLoader cityLoader) : IIncidentResolver
     {
+        private readonly Random _random = new();
         //TODO:
         /*
             Add to "Vigilant Comics" issues
@@ -37,17 +39,37 @@ namespace VigilantCity.Core.Services
             incident.ApproachModifiers.TryGetValue(approaches[0], out var approachModifier1);
             incident.ApproachModifiers.TryGetValue(approaches[1], out var approachModifier2);
 
-            var approachModifier = approachModifier1 + approachModifier2;
+            var modifier = approachModifier1 + approachModifier2;
 
-            var heroRoll = DiceRoller.Roll() + approachModifier;
-            var difficultyRoll = incident.DifficultyLevel.Roll;
-
-            var powerSet = hero.Powers.GetRandom();
+            var power = hero.Powers.GetRandom();
+            var poweredApproach = approaches.GetRandom();
 
             var powerManifestation = hero.PowerManifestations.FirstOrDefault(x =>
-            approaches.Contains(x.Approach) &&
+            x.Approach == poweredApproach &&
             x.DifficultyLevel == incident.DifficultyLevel &&
-            x.Power == powerSet);
+            x.PowerSet == power.PowerSet &&
+            x.PowerOrigin == power.PowerOrigin);
+
+            if (powerManifestation != null)
+            {
+                modifier += incident.DifficultyLevel.Roll;
+            }
+            else
+            {
+                var powerRoll = DiceRoller.Roll();
+                if (powerRoll >= incident.DifficultyLevel.Roll)
+                {
+                    modifier += incident.DifficultyLevel.GetModifier();
+                    hero.PowerManifestations.Add(new PowerManifestation(poweredApproach, power.PowerOrigin, power.PowerSet!, incident.DifficultyLevel));
+                }
+                else
+                {
+                    modifier -= incident.DifficultyLevel.GetModifier();
+                }
+            }
+
+            var heroRoll = DiceRoller.Roll() + modifier;
+            var difficultyRoll = incident.DifficultyLevel.Roll;
 
             return (heroRoll >= difficultyRoll);
         }

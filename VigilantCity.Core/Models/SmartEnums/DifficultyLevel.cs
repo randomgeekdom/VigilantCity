@@ -5,23 +5,23 @@ namespace VigilantCity.Core.Models.PowerSets
     [JsonConverter(typeof(DifficultyLevelJsonConverter))]
     public sealed class DifficultyLevel
     {
-        public string Name { get; }
-        public int Roll { get; }
-        public int EnergyCost { get; }
+        public static readonly DifficultyLevel Average = new(nameof(Average), 10);
 
-        private DifficultyLevel(string name, int roll, int energyCost)
+        public static readonly DifficultyLevel Backbreaking = new(nameof(Backbreaking), 20);
+
+        public static readonly DifficultyLevel Difficult = new(nameof(Difficult), 15);
+
+        public static readonly DifficultyLevel Easy = new(nameof(Easy), 5);
+
+        private DifficultyLevel(string name, int roll)
         {
             Name = name;
             Roll = roll;
-            EnergyCost = energyCost;
         }
 
-        public static readonly DifficultyLevel Easy = new(nameof(Easy), 5, 1);
-        public static readonly DifficultyLevel Average = new(nameof(Average), 10, 4);
-        public static readonly DifficultyLevel Difficult = new(nameof(Difficult), 15, 8);
-        public static readonly DifficultyLevel Backbreaking = new(nameof(Backbreaking), 20, 12);
+        public string Name { get; }
 
-        public override string ToString() => Name;
+        public int Roll { get; }
 
         public static IEnumerable<DifficultyLevel> List()
         {
@@ -33,5 +33,24 @@ namespace VigilantCity.Core.Models.PowerSets
                 Backbreaking
             ];
         }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is DifficultyLevel other)
+            {
+                return Name.Equals(other.Name, StringComparison.OrdinalIgnoreCase);
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return Name.GetHashCode();
+        }
+
+
+        public int GetModifier() => Roll / 5;
+
+        public override string ToString() => Name;
     }
 }
