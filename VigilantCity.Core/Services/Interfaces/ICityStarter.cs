@@ -4,6 +4,6 @@ namespace VigilantCity.Core.Services.Interfaces
 {
     public interface ICityStarter
     {
-        Task<City> StartAsync(Character startingCharacter);
+        Task<City> StartAsync(Hero startingHero);
     }
 }

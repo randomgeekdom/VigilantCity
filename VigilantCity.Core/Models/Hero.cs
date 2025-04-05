@@ -3,7 +3,7 @@ using VigilantCity.Core.Models.SmartEnums;
 
 namespace VigilantCity.Core.Models
 {
-    public partial record Character : Entity
+    public partial record Hero : Entity
     {
         [Required]
         public string? RealName { get; set; } = "";

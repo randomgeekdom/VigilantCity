@@ -4,10 +4,16 @@ namespace VigilantCity.Core.Models
 {
     public record City : Entity
     {
-        public required Character PlayerCharacter { get; set; }
-        public List<Character> Characters { get; set; } = [];
+        public required Hero PlayerHero { get; set; }
+        public List<Hero> Heroes { get; set; } = [];
         public List<Incident> Incidents { get; set; } = [];
         public List<string> Alerts { get; set; } = [];
-        public List<string> Issues { get; set; } = [];
+        public List<string> History { get; set; } = [];
+
+        public void AddAlert(string alert)
+        {
+            Alerts.Add(alert);
+            History.Add(alert);
+        }
     }
 }

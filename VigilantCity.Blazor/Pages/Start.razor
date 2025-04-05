@@ -17,19 +17,19 @@
     </div>
     <div class="col-12 col-md-4">
         <h4>Create your hero:</h4>
-        <EditForm OnValidSubmit="HandleValidSubmitAsync" Model="NewCharacter">
+        <EditForm OnValidSubmit="HandleValidSubmitAsync" Model="NewHero">
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" />
 
             <div class="mb-3">
                 <label for="name" class="form-label">Real Name:</label>
-                <InputText id="name" @bind-Value="NewCharacter.RealName" class="form-control" />
-                <ValidationMessage For="@(() => NewCharacter.RealName)" />
+                <InputText id="name" @bind-Value="NewHero.RealName" class="form-control" />
+                <ValidationMessage For="@(() => NewHero.RealName)" />
             </div>
             <div class="mb-3">
                 <label for="alias" class="form-label">Alias:</label>
-                <InputText id="alias" @bind-Value="NewCharacter.Alias" class="form-control" />
-                <ValidationMessage For="@(() => NewCharacter.Alias)" />
+                <InputText id="alias" @bind-Value="NewHero.Alias" class="form-control" />
+                <ValidationMessage For="@(() => NewHero.Alias)" />
             </div>
             <div class="mb-3">
                 <label for="powerSet" class="form-label">Power Set:</label>
@@ -40,19 +40,19 @@
                         <option value="@ps.Name">@ps.ToString()</option>
                     }
                 </InputSelect>
-                <ValidationMessage For="@(() => NewCharacter.Powers[0].PowerSet)" />
+                <ValidationMessage For="@(() => NewHero.Powers[0].PowerSet)" />
             </div>
             <div class="mb-3">
                 <label for="powerOrigin" class="form-label">Power Origin:</label>
-                <InputSelect id="powerOrigin" @bind-Value="NewCharacter.Powers[0].PowerOrigin" class="form-control">
+                <InputSelect id="powerOrigin" @bind-Value="NewHero.Powers[0].PowerOrigin" class="form-control">
                     <option value="">Select Power Origin</option>
                     @foreach (var powerOrigin in Enum.GetValues(typeof(PowerOrigin)).Cast<PowerOrigin>().OrderBy(x => x))
                     {
                         <option value="@powerOrigin">@powerOrigin</option>
                     }
                 </InputSelect>
-                <ValidationMessage For="@(() => NewCharacter.Powers[0].PowerOrigin)" />
-                <p class="mt-2">@NewCharacter.Powers[0].PowerOrigin.GetDescription()</p>
+                <ValidationMessage For="@(() => NewHero.Powers[0].PowerOrigin)" />
+                <p class="mt-2">@NewHero.Powers[0].PowerOrigin.GetDescription()</p>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </EditForm>
@@ -61,13 +61,13 @@
 
 @code {
     public City? City { get; set; }
-    public Character NewCharacter { get; set; } = new Character { Powers = new List<Power> { new Power() } };
+    public Hero NewHero { get; set; } = new Hero { Powers = new List<Power> { new Power() } };
 
     // Helper property to bind PowerSet by its Name
     private string SelectedPowerSetName
     {
-        get => NewCharacter.Powers[0].PowerSet?.Name ?? "";
-        set => NewCharacter.Powers[0].PowerSet = PowerSet.List().FirstOrDefault(ps =>
+        get => NewHero.Powers[0].PowerSet?.Name ?? "";
+        set => NewHero.Powers[0].PowerSet = PowerSet.List().FirstOrDefault(ps =>
             string.Equals(ps.Name, value, StringComparison.OrdinalIgnoreCase));
     }
 
@@ -87,7 +87,7 @@
 
     private async Task HandleValidSubmitAsync()
     {
-        await cityStarter.StartAsync(NewCharacter);
+        await cityStarter.StartAsync(NewHero);
         Navigation.NavigateTo("/");
     }
 }

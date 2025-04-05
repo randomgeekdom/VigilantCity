@@ -8,11 +8,11 @@ namespace VigilantCity.Core.Services
 {
     public class CityStarter(ICityLoader cityLoader) : ICityStarter
     {
-        public async Task<City> StartAsync(Character startingCharacter)
+        public async Task<City> StartAsync(Hero startingHero)
         {
             var city = new City
             {
-                PlayerCharacter = startingCharacter
+                PlayerHero = startingHero
             };
 
             await cityLoader.SaveCityAsync(city);

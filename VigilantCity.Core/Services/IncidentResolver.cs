@@ -18,9 +18,9 @@ namespace VigilantCity.Core.Services
         public async Task ResolveIncidentsAsync(City city, Guid heroIncidentId, List<Approach> approaches)
         {
             var heroIncident = city.Incidents.Single(x => x.Id == heroIncidentId);
-            this.ResolveIncident(city, city.PlayerCharacter, heroIncident, approaches);
+            this.ResolveIncident(city, city.PlayerHero, heroIncident, approaches);
 
-            foreach (var incident in city.Incidents)
+            foreach (var incident in city.Incidents.ToList())
             {
                 incident.TimeToResolve--;
                 if (incident.TimeToResolve <= 0)
@@ -32,40 +32,40 @@ namespace VigilantCity.Core.Services
             await cityLoader.SaveCityAsync(city);
         }
 
-        private bool ResolveIncident(Character character, Incident incident, List<Approach> approaches)
+        private bool ResolveIncident(Hero hero, Incident incident, List<Approach> approaches)
         {
             incident.ApproachModifiers.TryGetValue(approaches[0], out var approachModifier1);
             incident.ApproachModifiers.TryGetValue(approaches[1], out var approachModifier2);
 
             var approachModifier = approachModifier1 + approachModifier2;
 
-            var characterRoll = DiceRoller.Roll() + approachModifier;
+            var heroRoll = DiceRoller.Roll() + approachModifier;
             var difficultyRoll = incident.DifficultyLevel.Roll;
 
-            var powerSet = character.Powers.GetRandom();
+            var powerSet = hero.Powers.GetRandom();
 
-            var powerManifestation = character.PowerManifestations.FirstOrDefault(x =>
+            var powerManifestation = hero.PowerManifestations.FirstOrDefault(x =>
             approaches.Contains(x.Approach) &&
             x.DifficultyLevel == incident.DifficultyLevel &&
             x.Power == powerSet);
 
-            return (characterRoll >= difficultyRoll);
+            return (heroRoll >= difficultyRoll);
         }
 
-        private void ResolveIncident(City city, Character character, Incident incident, List<Approach> approaches)
+        private void ResolveIncident(City city, Hero hero, Incident incident, List<Approach> approaches)
         {
-            var isIncidentResolved = ResolveIncident(city.PlayerCharacter, incident, approaches);
+            var isIncidentResolved = ResolveIncident(city.PlayerHero, incident, approaches);
             var description = $"{incident.Type.GetDisplayName()} in {incident.District.GetDisplayName()}";
             city.Incidents.Remove(incident);
             if (isIncidentResolved)
             {
-                character.Reputation += incident.DifficultyLevel.Roll % 5 + 1;
-                city.Alerts.Add(city.PlayerCharacter.Alias + " resolved the " + description);
+                hero.Reputation += incident.DifficultyLevel.Roll % 5 + 1;
+                city.AddAlert(city.PlayerHero.Alias + " resolved the " + description);
             }
             else
             {
-                character.Reputation -= incident.DifficultyLevel.Roll % 5 + 1;
-                city.Alerts.Add(city.PlayerCharacter.Alias + " failed to resolve the " + description);
+                hero.Reputation -= incident.DifficultyLevel.Roll % 5 + 1;
+                city.AddAlert(city.PlayerHero.Alias + " failed to resolve the " + description);
             }
         }
     }
