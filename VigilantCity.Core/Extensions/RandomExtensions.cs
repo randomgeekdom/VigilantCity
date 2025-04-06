@@ -13,6 +13,11 @@ namespace VigilantCity.Core.Extensions
             return (T)values.GetValue(random.Next(values.Length));
         }
 
+        public static bool NextBool(this Random random, int percent = 50)
+        {
+            return random.Next(0, 100) < percent;
+        }
+
         public static T GetRandom<T>(this IEnumerable<T> values)
         {
             var valueArray = values.ToArray();

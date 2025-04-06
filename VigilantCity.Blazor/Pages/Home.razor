@@ -55,9 +55,8 @@
                     @foreach (var incident in City.Incidents)
                     {
                         <button class="btn btn-outline-danger list-group-item list-group-item-action" @onclick="() => NavigateToIncident(incident.Id)">
-                            @($"{incident.Type.GetDisplayName()} in {incident.District.GetDisplayName()}")
+                            @($"{incident.GetFullDescription()}")
                             &Tab;
-
                             <i class="fa-solid fa-stopwatch" aria-hidden="true"></i> @incident.TimeToResolve
                         </button>
                     }

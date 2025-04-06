@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using VigilantCity.Core.Models.SmartEnums;
 
 namespace VigilantCity.Core.Models
 {

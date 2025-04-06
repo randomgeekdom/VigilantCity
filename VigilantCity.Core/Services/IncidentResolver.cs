@@ -2,39 +2,55 @@
 using VigilantCity.Core.Models;
 using VigilantCity.Core.Models.Enumerations;
 using VigilantCity.Core.Models.Incidents;
-using VigilantCity.Core.Models.SmartEnums;
 using VigilantCity.Core.Services.Interfaces;
 
 namespace VigilantCity.Core.Services
 {
-    public class IncidentResolver(ICityLoader cityLoader) : IIncidentResolver
+
+    public class IncidentResolver(ICityLoader cityLoader, IHeroFactory heroFactory) : IIncidentResolver
     {
         private readonly Random _random = new();
-        //TODO:
-        /*
-            Add to "Vigilant Comics" issues
-            Add randomized vigilantes
-            Add civilians (if resolved by civilians, every character's reputation goes down)
-         */
 
         public async Task ResolveIncidentsAsync(City city, Guid heroIncidentId, List<Approach> approaches)
         {
+            // Get the incident to be resolved by the player hero
             var heroIncident = city.Incidents.Single(x => x.Id == heroIncidentId);
-            this.ResolveIncident(city, city.PlayerHero, heroIncident, approaches);
+            ResolveIncident(city, city.PlayerHero, heroIncident, approaches);
 
+            var otherHeroes = city.Heroes.ToList();
             foreach (var incident in city.Incidents.ToList())
             {
                 incident.TimeToResolve--;
                 if (incident.TimeToResolve <= 0)
                 {
-                    city.Incidents.Remove(incident);
+                    if (otherHeroes.Count != 0)
+                    {
+                        var randomHero = otherHeroes.GetRandom();
+                        ResolveIncident(city, randomHero, incident, approaches);
+                        otherHeroes.Remove(randomHero);
+                    }
+                    else
+                    {
+                        var createNewHero = _random.NextBool(11);
+                        if(createNewHero)
+                        {
+                            var newHero = heroFactory.CreateRandomHero();
+                            ResolveIncident(city, newHero, incident, approaches);
+                        }
+                        else
+                        {
+                            city.AddAlert("An incident was resolved by civilians.  All heroes have their reputation reduced.");
+                            city.Heroes.ForEach(x => x.Reputation--); 
+                            city.Incidents.Remove(incident);
+                        }
+                    }
                 }
             }
 
             await cityLoader.SaveCityAsync(city);
         }
 
-        private bool ResolveIncident(Hero hero, Incident incident, List<Approach> approaches)
+        private static void ResolveIncident(City city, Hero hero, Incident incident, List<Approach> approaches)
         {
             incident.ApproachModifiers.TryGetValue(approaches[0], out var approachModifier1);
             incident.ApproachModifiers.TryGetValue(approaches[1], out var approachModifier2);
@@ -70,14 +86,9 @@ namespace VigilantCity.Core.Services
 
             var heroRoll = DiceRoller.Roll() + modifier;
             var difficultyRoll = incident.DifficultyLevel.Roll;
+            var isIncidentResolved = (heroRoll >= difficultyRoll);
 
-            return (heroRoll >= difficultyRoll);
-        }
-
-        private void ResolveIncident(City city, Hero hero, Incident incident, List<Approach> approaches)
-        {
-            var isIncidentResolved = ResolveIncident(city.PlayerHero, incident, approaches);
-            var description = $"{incident.Type.GetDisplayName()} in {incident.District.GetDisplayName()}";
+            var description = incident.GetFullDescription();
             city.Incidents.Remove(incident);
             if (isIncidentResolved)
             {

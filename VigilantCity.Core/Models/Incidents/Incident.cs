@@ -1,4 +1,5 @@
-﻿using VigilantCity.Core.Models.Enumerations;
+﻿using VigilantCity.Core.Extensions;
+using VigilantCity.Core.Models.Enumerations;
 using VigilantCity.Core.Models.PowerSets;
 using VigilantCity.Core.Models.SmartEnums;
 
@@ -21,6 +22,11 @@ namespace VigilantCity.Core.Models.Incidents
             this.DifficultyLevel = difficultyLevel;
             this.TimeToResolve = timeToResolve;
             this.ApproachModifiers = approachModifiers;
+        }
+
+        public string GetFullDescription() 
+        {
+            return $"{Type.GetDisplayName()} in {District.GetDisplayName()}";
         }
     }
 }

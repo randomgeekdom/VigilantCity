@@ -1,5 +1,5 @@
 ﻿using VigilantCity.Core.Models.Enumerations;
-using VigilantCity.Core.Models.PowerSets;
+using VigilantCity.Core.Models.SmartEnums;
 
 namespace VigilantCity.Core.Models
 {
