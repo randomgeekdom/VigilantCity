@@ -12,6 +12,9 @@
         <div class="top-row px-4 d-flex justify-content-between align-items-center bg-dark">
             <a class="header" href="/"><h1>Vigilant City</h1></a>
             <div class="d-flex align-items-center">
+                <a class="btn btn-link" href="/history" title="History">
+                    <i class="fa-solid fa-history"></i>
+                </a>
                 <button title="Download Game Data" class="btn btn-link" @onclick="async () => await DownloadCityJsonAsync()" disabled="@(City == null)">
                     <i class="fa-solid fa-arrow-down"></i>
                 </button>

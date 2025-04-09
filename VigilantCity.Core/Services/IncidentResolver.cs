@@ -6,7 +6,6 @@ using VigilantCity.Core.Services.Interfaces;
 
 namespace VigilantCity.Core.Services
 {
-
     public class IncidentResolver(ICityLoader cityLoader, IHeroFactory heroFactory) : IIncidentResolver
     {
         private readonly Random _random = new();

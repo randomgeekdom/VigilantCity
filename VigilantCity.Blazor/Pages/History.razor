@@ -1,0 +1,61 @@
+﻿@page "/history"
+@using VigilantCity.Core.Extensions
+@using VigilantCity.Core.Models
+@using VigilantCity.Core.Models.Enumerations
+@using VigilantCity.Core.Models.PowerSets
+@using VigilantCity.Core.Models.SmartEnums
+@using VigilantCity.Core.Services.Interfaces
+@inject ICityLoader cityLoader;
+@inject IJSRuntime jsRuntime;
+@inject ICityStarter cityStarter;
+@inject NavigationManager Navigation;
+
+<PageTitle>History of Vigilant City</PageTitle>
+
+<div class="row">
+    <div class="col-12">
+        <h1>History of Vigilant City</h1>
+        <p>
+            The history of Vigilant City is a rich tapestry woven with the threads of its citizens' lives, their struggles, and their triumphs. From its humble beginnings to its current status as a beacon of hope and resilience, the city has seen it all.
+        </p>
+        <p>
+            The city was founded on the principles of justice, equality, and community. Over the years, it has faced numerous challenges, including natural disasters, economic downturns, and social unrest. However, through it all, the citizens have banded together to support one another and rebuild their beloved city.
+        </p>
+        <p>
+            Today, Vigilant City stands as a testament to the strength and determination of its people. It is a place where everyone is welcome, and where the spirit of community thrives.
+        </p>
+    </div>
+    <div class="col-12">
+        <h2>City Events</h2>
+        @if (Events != null && Events.Any())
+        {
+            foreach (var eventItem in Events)
+            {
+                <p>@eventItem</p>
+            }
+        }
+        else
+        {
+            <p>No events recorded.</p>
+        }
+    </div>
+</div>
+
+@code {
+    public City? City { get; set; }
+
+    public IEnumerable<string> Events
+    {
+        get
+        {
+            return this.City?.History ?? Enumerable.Empty<string>();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.City = await cityLoader.LoadCityAsync();
+
+        await base.OnInitializedAsync();
+    }
+}
