@@ -8,6 +8,7 @@
 @inject ICityLoader cityLoader;
 @inject IJSRuntime jsRuntime;
 @inject ICityStarter cityStarter;
+@inject ICityService cityService;
 @inject IIncidentFactory incidentFactory;
 @inject NavigationManager Navigation;
 
@@ -24,6 +25,7 @@
                 <th>Real Name</th>
                 <th>Powers</th>
                 <th>Reputation</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -35,7 +37,7 @@
                     <td>
                         @if (hero.Powers != null && hero.Powers.Count > 0)
                         {
-                            @string.Join(", ", hero.Powers.Select(x => x.PowerSet))
+                            @string.Join(", ", hero.Powers.Select(x => $"{x.PowerSet} ({x.PowerOrigin})"))
                         }
                         else
                         {
@@ -44,6 +46,16 @@
                     </td>
                     <td>
                         @hero.Reputation
+                    </td>
+                    <td>
+                        @if (hero != City.PlayerHero)
+                        {
+                            <button class="btn btn-danger" @onclick="() => SwitchHeroAsync(hero)">Play as Hero</button>
+                        }
+                        else
+                        {
+                            <span class="text-success">Player Hero</span>
+                        }
                     </td>
                 </tr>
             }
@@ -82,5 +94,11 @@
         {
             await base.OnInitializedAsync();
         }
+    }
+
+    private async Task SwitchHeroAsync(Hero hero)
+    {
+        await cityService.SwitchHeroAsync(this.City, hero);
+        StateHasChanged();
     }
 }

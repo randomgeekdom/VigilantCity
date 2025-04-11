@@ -18,5 +18,6 @@ builder.Services.AddScoped<ICityStarter, CityStarter>();
 builder.Services.AddScoped<IIncidentFactory, IncidentFactory>();
 builder.Services.AddScoped<IIncidentResolver, IncidentResolver>();
 builder.Services.AddScoped<IHeroFactory, HeroFactory>();
+builder.Services.AddScoped<ICityService, CityService>();
 
 await builder.Build().RunAsync();
