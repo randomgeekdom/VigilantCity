@@ -1,0 +1,86 @@
+﻿@page "/heroes"
+@using VigilantCity.Core.Extensions
+@using VigilantCity.Core.Models
+@using VigilantCity.Core.Models.Enumerations
+@using VigilantCity.Core.Models.Incidents
+@using VigilantCity.Core.Services.Interfaces
+@using System.Linq;
+@inject ICityLoader cityLoader;
+@inject IJSRuntime jsRuntime;
+@inject ICityStarter cityStarter;
+@inject IIncidentFactory incidentFactory;
+@inject NavigationManager Navigation;
+
+<PageTitle>Vigilant City - Heroes</PageTitle>
+
+@if (City != null)
+{
+    <h2>Heroes</h2>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Alias</th>
+                <th>Real Name</th>
+                <th>Powers</th>
+                <th>Reputation</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var hero in HeroList)
+            {
+                <tr>
+                    <td>@hero.Alias</td>
+                    <td>@hero.RealName</td>
+                    <td>
+                        @if (hero.Powers != null && hero.Powers.Count > 0)
+                        {
+                            @string.Join(", ", hero.Powers.Select(x => x.PowerSet))
+                        }
+                        else
+                        {
+                            <em>No Powers</em>
+                        }
+                    </td>
+                    <td>
+                        @hero.Reputation
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    public City? City { get; set; }
+
+    public IEnumerable<Hero> HeroList
+    {
+        get
+        {
+            if (this.City == null)
+            {
+                return Enumerable.Empty<Hero>();
+            }
+
+            var list = new List<Hero> { this.City.PlayerHero };
+            list.AddRange(this.City.Heroes);
+            return list;
+        }   
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.City = await cityLoader.LoadCityAsync();
+        StateHasChanged();
+
+        if (this.City == null)
+        {
+            Navigation.NavigateTo("/Start");
+        }
+        else
+        {
+            await base.OnInitializedAsync();
+        }
+    }
+}
