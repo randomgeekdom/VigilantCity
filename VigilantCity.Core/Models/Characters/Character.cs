@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿
+using System.ComponentModel.DataAnnotations;
 
-namespace VigilantCity.Core.Models
+namespace VigilantCity.Core.Models.Characters
 {
-    public partial record Hero : Entity
+    public abstract record Character : Entity
     {
         [Required]
         public string? RealName { get; set; } = "";
@@ -10,10 +11,7 @@ namespace VigilantCity.Core.Models
         public string? Alias { get; set; } = "";
 
         public List<Power> Powers { get; set; } = [];
-        public List<Relationship> PersonalRelationships { get; set; } = [];
         public List<PowerManifestation> PowerManifestations { get; set; } = [];
-
-        public int Reputation { get; set; }
 
         override public string ToString() => $"{Alias} ({RealName})";
     }

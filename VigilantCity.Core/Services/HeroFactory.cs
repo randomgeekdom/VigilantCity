@@ -1,6 +1,7 @@
 ﻿using RandomNameGeneratorLibrary;
 using VigilantCity.Core.Extensions;
 using VigilantCity.Core.Models;
+using VigilantCity.Core.Models.Characters;
 using VigilantCity.Core.Models.Enumerations;
 using VigilantCity.Core.Models.SmartEnums;
 using VigilantCity.Core.Services.Interfaces;

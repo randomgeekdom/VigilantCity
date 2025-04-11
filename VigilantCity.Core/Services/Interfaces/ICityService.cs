@@ -1,4 +1,5 @@
 ﻿using VigilantCity.Core.Models;
+using VigilantCity.Core.Models.Characters;
 
 namespace VigilantCity.Core.Services.Interfaces
 {

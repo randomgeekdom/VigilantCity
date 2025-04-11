@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection.PortableExecutable;
 using System.Text;
 using VigilantCity.Core.Models;
+using VigilantCity.Core.Models.Characters;
 using VigilantCity.Core.Services.Interfaces;
 
 namespace VigilantCity.Core.Services

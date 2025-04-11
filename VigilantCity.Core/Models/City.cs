@@ -1,4 +1,5 @@
-﻿using VigilantCity.Core.Models.Incidents;
+﻿using VigilantCity.Core.Models.Characters;
+using VigilantCity.Core.Models.Incidents;
 
 namespace VigilantCity.Core.Models
 {
