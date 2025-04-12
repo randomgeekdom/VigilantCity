@@ -12,7 +12,5 @@ namespace VigilantCity.Core.Models.Characters
 
         public List<Power> Powers { get; set; } = [];
         public List<PowerManifestation> PowerManifestations { get; set; } = [];
-
-        override public string ToString() => $"{Alias} ({RealName})";
     }
 }

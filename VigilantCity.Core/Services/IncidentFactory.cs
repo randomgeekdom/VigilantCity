@@ -29,7 +29,7 @@ namespace VigilantCity.Core.Services
                     }
                 }
             }
-            while (city.Incidents.Count < 3);
+            while (city.Incidents.Count < _random.Next(Math.Max(4, city.Heroes.Count)));
             await _cityLoader.SaveCityAsync(city);
         }
 

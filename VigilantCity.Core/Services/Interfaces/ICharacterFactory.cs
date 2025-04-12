@@ -2,8 +2,9 @@
 
 namespace VigilantCity.Core.Services.Interfaces
 {
-    public interface IHeroFactory
+    public interface ICharacterFactory
     {
         Hero CreateRandomHero();
+        Villain CreateRandomVillain();
     }
 }

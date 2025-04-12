@@ -7,5 +7,7 @@ namespace VigilantCity.Core.Models.Characters
         public List<Relationship> PersonalRelationships { get; set; } = [];
 
         public int Reputation { get; set; }
+
+        override public string ToString() => $"{Alias} ({RealName})";
     }
 }

@@ -7,7 +7,7 @@ using VigilantCity.Core.Services.Interfaces;
 
 namespace VigilantCity.Core.Services
 {
-    public class IncidentResolver(ICityLoader cityLoader, IHeroFactory heroFactory) : IIncidentResolver
+    public class IncidentResolver(ICityLoader cityLoader, ICharacterFactory characterFactory) : IIncidentResolver
     {
         private readonly Random _random = new();
 
@@ -18,6 +18,7 @@ namespace VigilantCity.Core.Services
             ResolveIncident(city, city.PlayerHero, heroIncident, approaches);
 
             var otherHeroes = city.Heroes.ToList();
+            var heroCount = otherHeroes.Count;
             foreach (var incident in city.Incidents.ToList())
             {
                 incident.TimeToResolve--;
@@ -25,21 +26,22 @@ namespace VigilantCity.Core.Services
                 {
                     if (otherHeroes.Count != 0)
                     {
-                        var randomHero = otherHeroes.GetRandom();
+                        var randomHero = otherHeroes.GetRandom() ?? throw new NullReferenceException();
                         ResolveIncident(city, randomHero, incident, approaches);
                         otherHeroes.Remove(randomHero);
                     }
                     else
                     {
-                        var createNewHero = _random.NextBool(11);
+                        var createNewHero = _random.NextBool(100 - Math.Min(heroCount, 3));
                         if(createNewHero)
                         {
-                            var newHero = heroFactory.CreateRandomHero();
+                            var newHero = characterFactory.CreateRandomHero();
+                            city.Heroes.Add(newHero);
                             ResolveIncident(city, newHero, incident, approaches);
                         }
                         else
                         {
-                            city.AddAlert("An incident was resolved by civilians.  All heroes have their reputation reduced.");
+                            city.AddAlert($"The {incident.GetFullDescription()} was unresolved by the heroes.  All heroes have their reputation reduced.");
                             city.Heroes.ForEach(x => x.Reputation--); 
                             city.Incidents.Remove(incident);
                         }
@@ -50,7 +52,7 @@ namespace VigilantCity.Core.Services
             await cityLoader.SaveCityAsync(city);
         }
 
-        private static void ResolveIncident(City city, Hero hero, Incident incident, List<Approach> approaches)
+        private void ResolveIncident(City city, Hero hero, Incident incident, List<Approach> approaches)
         {
             incident.ApproachModifiers.TryGetValue(approaches[0], out var approachModifier1);
             incident.ApproachModifiers.TryGetValue(approaches[1], out var approachModifier2);
@@ -92,8 +94,25 @@ namespace VigilantCity.Core.Services
             city.Incidents.Remove(incident);
             if (isIncidentResolved)
             {
+                var villain = city.Villains.Where(x=>x.Status == VillainStatus.Active).GetRandom();
+                if(villain == null)
+                {
+                    villain = characterFactory.CreateRandomVillain();
+                    city.Villains.Add(villain);
+                }
+
+                if (approaches.Contains(Approach.Lethal))
+                {
+                    villain.Status = VillainStatus.Dead;
+                    city.AddAlert($"{hero.Alias} resolved the {description}.  The mastermind appeared to be {villain} and was killed in the process.");
+                }
+                else
+                {
+                    villain.Status = VillainStatus.Imprisoned;
+                    city.AddAlert($"{hero.Alias} resolved the {description}.  The mastermind appeared to be {villain} and was imprisoned.");
+                }
+
                 hero.Reputation += incident.DifficultyLevel.Roll % 5 + 1;
-                city.AddAlert(city.PlayerHero.Alias + " resolved the " + description);
             }
             else
             {

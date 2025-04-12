@@ -92,7 +92,7 @@ namespace VigilantCity.Core.Models.SmartEnums
 
         public string GetName()
         {
-            List<string> suffixes = ["Man", "Woman", "Girl", "Boy", "Child", "Kid", "Person"];
+            List<string> suffixes = ["Man", "Woman", "Girl", "Boy", "Child", "Kid", "Person", "Master", "Mistress", "Knight", "Warrior", "Lord", "Lady"];
             return $"{this.Prefixes.GetRandom()} {suffixes.GetRandom()}";
         }
     }
