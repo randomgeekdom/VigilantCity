@@ -26,14 +26,16 @@
                 <th>Real Name</th>
                 <th>Powers</th>
                 <th>Reputation</th>
-                <th></th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var hero in HeroList)
             {
                 <tr>
-                    <td>@hero.Alias</td>
+                    <td title="Click to change alias" style="cursor: pointer;" @onclick="() => ChangeAliasAsync(hero)">
+                        @hero.Alias
+                    </td>
                     <td>@hero.RealName</td>
                     <td>
                         @if (hero.Powers != null && hero.Powers.Count > 0)
@@ -45,13 +47,11 @@
                             <em>No Powers</em>
                         }
                     </td>
-                    <td>
-                        @hero.Reputation
-                    </td>
+                    <td>@hero.Reputation</td>
                     <td>
                         @if (hero != City.PlayerHero)
                         {
-                            <button class="btn btn-danger" @onclick="() => SwitchHeroAsync(hero)">Play as Hero</button>
+                            <button class="btn btn-danger btn-sm" @onclick="() => SwitchHeroAsync(hero)">Play as Hero</button>
                         }
                         else
                         {
@@ -79,7 +79,7 @@
             var list = new List<Hero> { this.City.PlayerHero };
             list.AddRange(this.City.Heroes);
             return list;
-        }   
+        }
     }
 
     protected override async Task OnInitializedAsync()
@@ -101,5 +101,18 @@
     {
         await cityService.SwitchHeroAsync(this.City!, hero);
         StateHasChanged();
+    }
+
+    private async Task ChangeAliasAsync(Hero hero)
+    {
+        // Show JavaScript prompt with the current alias as default value.
+        var newAlias = await jsRuntime.InvokeAsync<string>("prompt", "Enter new alias:", hero.Alias);
+        if (!string.IsNullOrWhiteSpace(newAlias) && newAlias != hero.Alias)
+        {
+            hero.Alias = newAlias;
+            // Persist change (here, saving the city after updating the hero alias).
+            await cityLoader.SaveCityAsync(this.City!);
+            StateHasChanged();
+        }
     }
 }

@@ -28,15 +28,17 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var hero in City.Villains)
+            @foreach (var villain in City.Villains)
             {
                 <tr>
-                    <td>@hero.Alias</td>
-                    <td>@hero.RealName</td>
+                    <td title="Click to change alias" style="cursor: pointer;" @onclick="() => ChangeAliasAsync(villain)">
+                        @villain.Alias
+                    </td>
+                    <td>@villain.RealName</td>
                     <td>
-                        @if (hero.Powers != null && hero.Powers.Count > 0)
+                        @if (villain.Powers != null && villain.Powers.Count > 0)
                         {
-                            @string.Join(", ", hero.Powers.Select(x => $"{x.PowerSet} ({x.PowerOrigin})"))
+                            @string.Join(", ", villain.Powers.Select(x => $"{x.PowerSet} ({x.PowerOrigin})"))
                         }
                         else
                         {
@@ -64,6 +66,19 @@
         else
         {
             await base.OnInitializedAsync();
+        }
+    }
+
+    private async Task ChangeAliasAsync(Villain villain)
+    {
+        // Prompt for a new alias using JS interop
+        var newAlias = await jsRuntime.InvokeAsync<string>("prompt", "Enter new alias:", villain.Alias);
+        if (!string.IsNullOrWhiteSpace(newAlias) && newAlias != villain.Alias)
+        {
+            villain.Alias = newAlias;
+            // Persist the change by saving the updated city, assuming the city service handles this.
+            await cityLoader.SaveCityAsync(City!);
+            StateHasChanged();
         }
     }
 }
