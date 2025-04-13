@@ -35,13 +35,25 @@ namespace VigilantCity.Core.Services
             var powerSet = PowerSet.List().GetRandom();
             var powerOrigin = _random.GetRandom<PowerOrigin>();
 
-            return new Villain
+            if (this._random.NextBool())
             {
-                Alias = powerSet.GetName(),
-                Powers = [new Power { PowerOrigin = powerOrigin, PowerSet = powerSet }],
-                RealName = $"{firstName} {lastName}",
-                Status = VillainStatus.Active,
-            };
+                return new Villain
+                {
+                    Alias = $"{firstName} {lastName}",
+                    RealName = $"{firstName} {lastName}",
+                    Status = VillainStatus.Active,
+                };
+            }
+            else
+            {
+                return new Villain
+                {
+                    Alias = powerSet.GetName(),
+                    Powers = [new Power { PowerOrigin = powerOrigin, PowerSet = powerSet }],
+                    RealName = $"{firstName} {lastName}",
+                    Status = VillainStatus.Active,
+                };
+            }
         }
     }
 }

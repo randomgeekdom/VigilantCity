@@ -8,6 +8,14 @@ namespace VigilantCity.Core.Models.Characters
     {
         public VillainStatus Status { get; set; } = VillainStatus.Active;
 
-        override public string ToString() => $"{Alias} ({RealName})";
+        override public string ToString()
+        {
+            if(Alias?.ToLowerInvariant().Trim() == RealName?.ToLowerInvariant().Trim())
+            {
+                return Alias!;
+            }
+
+            return $"{Alias} ({RealName})";
+        }
     }
 }
