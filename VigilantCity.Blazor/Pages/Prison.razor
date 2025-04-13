@@ -1,0 +1,69 @@
+﻿@page "/prison"
+@using System.Linq;
+@using VigilantCity.Core.Extensions
+@using VigilantCity.Core.Models
+@using VigilantCity.Core.Models.Characters
+@using VigilantCity.Core.Models.Enumerations
+@using VigilantCity.Core.Models.Incidents
+@using VigilantCity.Core.Services.Interfaces
+@inject ICityLoader cityLoader;
+@inject IJSRuntime jsRuntime;
+@inject ICityStarter cityStarter;
+@inject ICityService cityService;
+@inject IIncidentFactory incidentFactory;
+@inject NavigationManager Navigation;
+
+<PageTitle>Vigilant City - Prison Record</PageTitle>
+
+@if (City != null)
+{
+    <h2>Prisoners</h2>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Alias</th>
+                <th>Real Name</th>
+                <th>Powers</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var hero in City.Villains)
+            {
+                <tr>
+                    <td>@hero.Alias</td>
+                    <td>@hero.RealName</td>
+                    <td>
+                        @if (hero.Powers != null && hero.Powers.Count > 0)
+                        {
+                            @string.Join(", ", hero.Powers.Select(x => $"{x.PowerSet} ({x.PowerOrigin})"))
+                        }
+                        else
+                        {
+                            <em>No Powers</em>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    public City? City { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.City = await cityLoader.LoadCityAsync();
+        StateHasChanged();
+
+        if (this.City == null)
+        {
+            Navigation.NavigateTo("/Start");
+        }
+        else
+        {
+            await base.OnInitializedAsync();
+        }
+    }
+}
