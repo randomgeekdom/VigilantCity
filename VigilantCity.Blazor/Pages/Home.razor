@@ -43,7 +43,11 @@
 @if (City != null)
 {
     <div class="mb-4 text-center">
-        <h3>@City.PlayerHero.Alias</h3>
+        <h3>
+            <a href="@($"/hero/{City.PlayerHero.Id}")" title="View Hero Details">
+                @City.PlayerHero.Alias
+            </a>
+        </h3>
         <p>(@City.PlayerHero.RealName)</p>
     </div>
 

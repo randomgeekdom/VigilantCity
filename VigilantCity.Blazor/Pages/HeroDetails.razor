@@ -1,0 +1,123 @@
+﻿@page "/hero/{heroId:guid}"
+@using System.Linq
+@using VigilantCity.Core.Models
+@using VigilantCity.Core.Models.Characters
+@using VigilantCity.Core.Services.Interfaces
+@inject ICityLoader cityLoader
+@inject NavigationManager Navigation
+@inject IJSRuntime jsRuntime
+
+<PageTitle>Hero Details</PageTitle>
+
+@if (city == null)
+{
+    <p>Loading...</p>
+}
+else if (selectedHero == null)
+{
+    <p>Hero not found.</p>
+}
+else
+{
+    <div class="container mt-4">
+        <h2 style="cursor: pointer; text-decoration: underline;" title="Click to rename" @onclick="RenameAliasAsync">
+            @selectedHero.Alias
+        </h2>
+        <p><strong>Real Name:</strong> @selectedHero.RealName</p>
+        <p><strong>Reputation:</strong> @selectedHero.Reputation</p>
+
+        <hr />
+
+        <h4>Powers and Manifestations</h4>
+        @if (selectedHero.Powers != null && selectedHero.Powers.Any())
+        {
+            @foreach (var power in selectedHero.Powers)
+            {
+                <div class="mb-4">
+                    <h5>@power.PowerSet (<em>@power.PowerOrigin</em>)</h5>
+                    @{
+                        var manifestationsForPower = selectedHero.PowerManifestations?
+                                                       .Where(pm => pm.PowerSet.Equals(power.PowerSet));
+                    }
+                    @if (manifestationsForPower != null && manifestationsForPower.Any())
+                    {
+                        <table class="table table-bordered table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Approach</th>
+                                    <th>Difficulty</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var pm in manifestationsForPower.OrderBy(x => x.Approach).ThenBy(x => x.DifficultyLevel.Roll))
+                                {
+                                    <tr>
+                                        <td style="cursor: pointer; text-decoration: underline;" title="Click to rename" @onclick="() => RenamePowerManifestationAsync(pm)">
+                                            @(string.IsNullOrWhiteSpace(pm.Name) ? "Unnamed" : pm.Name)
+                                        </td>
+                                        <td>@pm.Approach</td>
+                                        <td>@pm.DifficultyLevel</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p><em>No Manifestations</em></p>
+                    }
+                </div>
+            }
+        }
+        else
+        {
+            <p><em>No Powers</em></p>
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public Guid heroId { get; set; }
+    private City? city;
+    private Hero? selectedHero;
+
+    protected override async Task OnInitializedAsync()
+    {
+        city = await cityLoader.LoadCityAsync();
+        if (city != null)
+        {
+            // Combine the player's hero with other heroes.
+            var allHeroes = new List<Hero> { city.PlayerHero };
+            allHeroes.AddRange(city.Heroes);
+            selectedHero = allHeroes.FirstOrDefault(h => h.Id == heroId);
+        }
+    }
+
+    private async Task RenameAliasAsync()
+    {
+        // Show a JS prompt with the current alias as the default value.
+        var newAlias = await jsRuntime.InvokeAsync<string>("prompt", "Enter new alias:", selectedHero?.Alias);
+        if (!string.IsNullOrWhiteSpace(newAlias) && newAlias != selectedHero?.Alias)
+        {
+            selectedHero!.Alias = newAlias;
+            // Persist the change (save the city) and refresh the UI.
+            await cityLoader.SaveCityAsync(city!);
+            StateHasChanged();
+        }
+    }
+
+    private async Task RenamePowerManifestationAsync(PowerManifestation pm)
+    {
+        // Use JS prompt with the current name (or "Unnamed" if not set) as default.
+        var currentName = string.IsNullOrWhiteSpace(pm.Name) ? "Unnamed" : pm.Name;
+        var newName = await jsRuntime.InvokeAsync<string>("prompt", "Enter new name for this power manifestation:", currentName);
+        if (!string.IsNullOrWhiteSpace(newName) && newName != pm.Name)
+        {
+            pm.Name = newName;
+            // Persist changes by saving the updated city data.
+            await cityLoader.SaveCityAsync(city!);
+            StateHasChanged();
+        }
+    }
+}

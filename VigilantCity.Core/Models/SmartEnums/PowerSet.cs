@@ -10,7 +10,7 @@ namespace VigilantCity.Core.Models.SmartEnums
 
         public static readonly PowerSet ArmoredBody = new("ArmoredBody", "Armored Body", ["Armor", "Steel"]);
 
-        public static readonly PowerSet CombatMaster = new("CombatMaster", "Combat Master", ["Combat", "Fight"]);
+        public static readonly PowerSet CombatMaster = new("CombatMaster", "Combat Mastery", ["Combat", "Fight"]);
 
         public static readonly PowerSet EnergyManipulation = new(nameof(EnergyManipulation), "Energy Manipulation", ["Energy", "Laser", "Light"]);
 
