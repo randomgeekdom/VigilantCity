@@ -86,7 +86,8 @@ namespace VigilantCity.Core.Services
                 }
             }
 
-            var heroRoll = DiceRoller.Roll() + modifier;
+            var heroBaseRoll = DiceRoller.Roll();
+            var heroRoll = heroBaseRoll + modifier;
             var difficultyRoll = incident.DifficultyLevel.Roll;
             var isIncidentResolved = (heroRoll >= difficultyRoll);
 
@@ -104,12 +105,12 @@ namespace VigilantCity.Core.Services
                 if (approaches.Contains(Approach.Lethal))
                 {
                     villain.Status = VillainStatus.Dead;
-                    city.AddAlert($"{hero.Alias} resolved the {description}.  The mastermind appeared to be {villain} and was killed in the process.");
+                    city.AddAlert($"{hero} resolved the {description}.  The mastermind appeared to be {villain} and was killed in the process.");
                 }
                 else
                 {
                     villain.Status = VillainStatus.Imprisoned;
-                    city.AddAlert($"{hero.Alias} resolved the {description}.  The mastermind appeared to be {villain} and was imprisoned.");
+                    city.AddAlert($"{hero} resolved the {description}.  The mastermind appeared to be {villain} and was imprisoned.");
                 }
 
                 hero.Reputation += incident.DifficultyLevel.Roll % 5 + 1;
@@ -117,8 +118,43 @@ namespace VigilantCity.Core.Services
             else
             {
                 hero.Reputation -= incident.DifficultyLevel.Roll % 5 + 1;
-                city.AddAlert(city.PlayerHero.Alias + " failed to resolve the " + description);
+
+                if(heroBaseRoll <= 1)
+                {
+                    var consequence = GetHeroDeath(city, hero);
+                }
+
+                var alert = $"{hero} failed to resolve the {description}.";
+                city.AddAlert(alert);
             }
+        }
+
+        private string GetHeroDeath(City city, Hero hero)
+        {
+            var message = $" They were killed in the process.";
+            if (hero != city.PlayerHero)
+            {
+                city.Heroes.Remove(hero);
+            }
+            else
+            {
+                Hero newPlayerHero;
+                if (city.Heroes.Any())
+                { 
+                    newPlayerHero = city.Heroes.GetRandom()!;
+                    city.Heroes.Remove(newPlayerHero);
+                    city.PlayerHero = newPlayerHero;
+                }
+                else
+                {
+                    newPlayerHero = characterFactory.CreateRandomHero();
+                    city.PlayerHero = newPlayerHero;
+                }
+
+                message += $" You will now play as {newPlayerHero}.";
+            }
+
+            return message;
         }
     }
 }

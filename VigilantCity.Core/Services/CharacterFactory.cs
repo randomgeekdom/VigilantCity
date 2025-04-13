@@ -16,7 +16,7 @@ namespace VigilantCity.Core.Services
         {
             var firstName = _random.GenerateRandomFirstName();
             var lastName = _random.GenerateRandomLastName();
-            var powerSet = PowerSet.List().GetRandom();
+            var powerSet = PowerSet.List().GetRandom()!;
             var powerOrigin = _random.GetRandom<PowerOrigin>();
 
             return new Hero

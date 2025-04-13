@@ -90,6 +90,7 @@
         }
     }
 
+    // Patrol the city to generate new incidents
     private async Task PatrolAsync()
     {
         await incidentFactory.GenerateIncidents(this.City!);

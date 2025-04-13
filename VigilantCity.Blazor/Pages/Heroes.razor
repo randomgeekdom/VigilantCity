@@ -99,7 +99,7 @@
 
     private async Task SwitchHeroAsync(Hero hero)
     {
-        await cityService.SwitchHeroAsync(this.City, hero);
+        await cityService.SwitchHeroAsync(this.City!, hero);
         StateHasChanged();
     }
 }
