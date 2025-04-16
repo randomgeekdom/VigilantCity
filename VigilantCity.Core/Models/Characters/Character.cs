@@ -1,5 +1,4 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace VigilantCity.Core.Models.Characters
 {
@@ -9,6 +8,8 @@ namespace VigilantCity.Core.Models.Characters
         public string? RealName { get; set; } = "";
         [Required]
         public string? Alias { get; set; } = "";
+
+        public int PowerLevel { get; set; } = 1;
 
         public List<Power> Powers { get; set; } = [];
         public List<PowerManifestation> PowerManifestations { get; set; } = [];
