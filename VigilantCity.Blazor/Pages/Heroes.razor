@@ -80,7 +80,7 @@
 
             var list = new List<Hero> { this.City.PlayerHero };
             list.AddRange(this.City.Heroes);
-            return list;
+            return list.OrderBy(x=>x.Alias);
         }
     }
 
