@@ -7,7 +7,6 @@ namespace VigilantCity.Core.Models.SmartEnums
     [JsonConverter(typeof(PowerSetJsonConverter))]
     public sealed class PowerSet
     {
-
         public static readonly PowerSet ArmoredBody = new("ArmoredBody", "Armored Body", ["Armor", "Steel"]);
 
         public static readonly PowerSet CombatMaster = new("CombatMaster", "Combat Mastery", ["Combat", "Fight"]);
@@ -90,10 +89,28 @@ namespace VigilantCity.Core.Models.SmartEnums
 
         public override string ToString() => DisplayName;
 
-        public string GetName()
+        public string GetAlias(string? name)
         {
-            List<string> suffixes = ["Man", "Woman", "Girl", "Boy", "Child", "Kid", "Person", "Master", "Mistress", "Knight", "Warrior", "Lord", "Lady"];
-            return $"{this.Prefixes.GetRandom()} {suffixes.GetRandom()}";
+            var addedSuffix = name?.Split(" ")?.GetRandom();
+            if (string.IsNullOrWhiteSpace(addedSuffix))
+            {
+                return GetAlias();
+            }
+
+            var newSuffixes = new List<string>(_suffixes)
+            {
+                addedSuffix
+            };
+
+            return $"{this.Prefixes.GetRandom()} {newSuffixes.GetRandom()}";
+        }
+
+
+        private static readonly List<string> _suffixes = ["Man", "Woman", "Girl", "Boy", "Child", "Kid", "Person", "Master", "Mistress", "Knight", "Warrior", "Lord", "Lady"];
+
+        public string GetAlias()
+        {
+            return $"{this.Prefixes.GetRandom()} {_suffixes.GetRandom()}";
         }
     }
 }

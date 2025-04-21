@@ -18,12 +18,13 @@ namespace VigilantCity.Core.Services
             var lastName = _random.GenerateRandomLastName();
             var powerSet = PowerSet.List().GetRandom()!;
             var powerOrigin = _random.GetRandom<PowerOrigin>();
+            string realName = $"{firstName} {lastName}";
 
             return new Hero
             {
-                Alias = powerSet.GetName(),
+                Alias = powerSet.GetAlias(realName),
                 Powers = [new Power { PowerOrigin = powerOrigin, PowerSet = powerSet }],
-                RealName = $"{firstName} {lastName}",
+                RealName = realName,
                 Reputation = _random.Next(1, 10),
             };
         }
@@ -34,13 +35,14 @@ namespace VigilantCity.Core.Services
             var lastName = _random.GenerateRandomLastName();
             var powerSet = PowerSet.List().GetRandom();
             var powerOrigin = _random.GetRandom<PowerOrigin>();
+            string realName = $"{firstName} {lastName}";
 
             if (this._random.NextBool())
             {
                 return new Villain
                 {
-                    Alias = $"{firstName} {lastName}",
-                    RealName = $"{firstName} {lastName}",
+                    Alias = realName,
+                    RealName = realName,
                     Status = VillainStatus.Active,
                 };
             }
@@ -48,9 +50,9 @@ namespace VigilantCity.Core.Services
             {
                 return new Villain
                 {
-                    Alias = powerSet.GetName(),
+                    Alias = powerSet.GetAlias(realName),
                     Powers = [new Power { PowerOrigin = powerOrigin, PowerSet = powerSet }],
-                    RealName = $"{firstName} {lastName}",
+                    RealName = realName,
                     Status = VillainStatus.Active,
                 };
             }
