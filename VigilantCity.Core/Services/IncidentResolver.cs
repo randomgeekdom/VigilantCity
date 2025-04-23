@@ -121,40 +121,12 @@ namespace VigilantCity.Core.Services
 
                 if(heroBaseRoll <= 1)
                 {
-                    var consequence = GetHeroDeath(city, hero);
+                    var consequence = city.GetHeroSevereConsequence(hero, characterFactory.CreateRandomHero);
                 }
 
                 var alert = $"{hero} failed to resolve the {description}.";
                 city.AddAlert(alert);
             }
-        }
-
-        private string GetHeroDeath(City city, Hero hero)
-        {
-            var message = $" They were killed in the process.";
-            if (hero != city.PlayerHero)
-            {
-                city.Heroes.Remove(hero);
-            }
-            else
-            {
-                Hero newPlayerHero;
-                if (city.Heroes.Any())
-                { 
-                    newPlayerHero = city.Heroes.GetRandom()!;
-                    city.Heroes.Remove(newPlayerHero);
-                    city.PlayerHero = newPlayerHero;
-                }
-                else
-                {
-                    newPlayerHero = characterFactory.CreateRandomHero();
-                    city.PlayerHero = newPlayerHero;
-                }
-
-                message += $" You will now play as {newPlayerHero}.";
-            }
-
-            return message;
         }
     }
 }
