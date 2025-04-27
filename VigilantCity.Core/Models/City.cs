@@ -14,6 +14,7 @@ namespace VigilantCity.Core.Models
         public List<Incident> Incidents { get; set; } = [];
         public List<string> Alerts { get; set; } = [];
         public List<string> History { get; set; } = [];
+        public List<Guid> ResolvedIncidentIds { get; set; } = [];
 
         public void AddAlert(string alert)
         {
@@ -62,6 +63,12 @@ namespace VigilantCity.Core.Models
             }
 
             return message;
+        }
+
+        public void MarkIncidentResolved(Incident incident)
+        {
+            this.Incidents.Remove(incident);
+            this.ResolvedIncidentIds.Add(incident.Id);
         }
     }
 }

@@ -92,7 +92,7 @@ namespace VigilantCity.Core.Services
             var isIncidentResolved = (heroRoll >= difficultyRoll);
 
             var description = incident.GetFullDescription();
-            city.Incidents.Remove(incident);
+            city.MarkIncidentResolved(incident);
             if (isIncidentResolved)
             {
                 var villain = city.Villains.Where(x=>x.Status == VillainStatus.Active).GetRandom();
